@@ -1,0 +1,49 @@
+
+// This macro converts  all tif image sequences in a folder to stack.
+// The macro searches for xy folders and process fluor1, phase and seg subfolders.
+// Author: Andres Florez     April 29, 2020. Harvard University
+
+
+//Select input
+inDir = getArgument(); // get path of Analysis folder from Matlab directly as argument
+dirnames = getFileList(inDir); 
+
+//Batch Mode
+setBatchMode(true);
+
+count1 = 0;
+count2 = 0;
+for (n = 0; n < dirnames.length; n++) {    // lists all the directories under Analysis folder
+        currDir1 = inDir+dirnames[n];
+        //Array.print(currDir1);
+        list= getFileList(currDir1);
+        for (k=0; k<list.length; k++) {
+            currDir2 = inDir+dirnames[n]+list[k];  // lists the directories under xy folders
+            //Array.print(currDir2);
+            count1++;
+            if (endsWith(list[k],"fluor1/")){
+            run("Image Sequence...", "open=currDir2 sort");
+            name=getTitle();
+            saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif"); // save stack as .tif
+            }
+            if (endsWith(list[k],"phase/")){
+            run("Image Sequence...", "open=currDir2 sort");  // save stack as .tif
+            name=getTitle();
+            saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif");
+            }
+                list2= getFileList(currDir2);  // delete all the single image files (.tif)
+                //Array.print(list2);
+                for (c=0; c<list2.length; c++) {
+                    count2++;
+                    if (startsWith(list2[c],"t")){  //this only works if all the images always start with time variable (t)
+                    ok=File.delete(currDir2+list2[c]);
+                    }
+                } 
+         }   
+}
+count3 = count2-count1;
+print("Number of folders processed "+count1);
+print("Number of image files deleted: "+count3);
+
+
+
