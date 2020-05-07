@@ -18,7 +18,7 @@ Running installation of [Fiji](https://fiji.sc/) and [MIJ](http://bigwww.epfl.ch
 Dowonload the tool:
 
 ```bash
-git clone 
+git clone https://github.com/batflorez/MorphoSegger_v1.git
 ```
 
 ## Usage
