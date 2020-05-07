@@ -1,4 +1,6 @@
 # MorphoSegger v1.0
+![alt text][logo]
+[logo]: https://github.com/batflorez/MorphoSegger_v1/blob/master/Morphometrics_v2/Morphometrics_GUI/morphometrics_v2_f.JPG
 
 MorphoSegger is a Matlab package for imaging analysis of bacterial cells that combines two powerlful tools, [SuperSegger](https://github.com/wiggins-lab/SuperSegger/wiki) and [Morphometrics](https://simtk.org/projects/morphometrics). It uses ImageJ macros run in Matlab with [MIJ](http://bigwww.epfl.ch/sage/soft/mij/) for image pre-processing.
 
