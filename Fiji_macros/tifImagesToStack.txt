@@ -3,7 +3,7 @@
 // The macro searches for xy folders and process fluor1, phase and seg subfolders.
 // Author: Andres Florez     April 29, 2020. Harvard University
 
-String.resetBuffer;
+
 //Select input
 inDir = getArgument(); // get path of Analysis folder from Matlab as an argument
 dirnames = getFileList(inDir); 
@@ -15,23 +15,23 @@ count1 = 0;
 count2 = 0;
 for (n = 0; n < dirnames.length; n++) {    // lists all the directories under Analysis folder
         currDir1 = inDir+dirnames[n];
-        //Array.print(currDir1);
         list= getFileList(currDir1);
         for (k=0; k<list.length; k++) {
             currDir2 = inDir+dirnames[n]+list[k];  // lists the directories under xy folders
             //Array.print(currDir2);
             count1++;
-
             if (endsWith(list[k],"fluor1/")){
                 run("Image Sequence...", "open=currDir2 sort");
                 name=getTitle();
                 saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif"); // save stack as .tif
+                close();
             }
 
             if (endsWith(list[k],"phase/")){
                 run("Image Sequence...", "open=currDir2 sort");  // save stack as .tif
                 name=getTitle();
                 saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif");
+                close();
             }
             
             list2= getFileList(currDir2);  // delete all the single image files (.tif)
@@ -47,6 +47,5 @@ for (n = 0; n < dirnames.length; n++) {    // lists all the directories under An
 count3 = count2-count1;
 print("Number of folders processed "+count1);
 print("Number of image files deleted: "+count3);
-
 
 

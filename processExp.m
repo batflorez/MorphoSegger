@@ -43,6 +43,8 @@ macroFile1='ConvertND2toTif.txt';
 % Call MIJ for preprocessing:
 filepathMacro = getMacroPath(); %Macro Files path
 
+%variables beginning and end of the movie
+
 runMacro([filepathMacro,macroFile1],dirname); %calls MIJ to run the Fiji macro without arguments
 
 %% Converting to SuperSegger naming format
@@ -206,11 +208,19 @@ BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 
 %clearvars -except dirname filepathMacro
 
+%% Clean up files (raw_im *.tif,*.mat)
+
+% Delete original and raw_im folders:
+disp('Deleting files...')
+rmdir( [dirname,filesep,'original',filesep],'s' ); 
+rmdir( [dirname,filesep,'raw_im',filesep],'s' );
+
+
 %% Converting images to stack 
 
-% disp('Converting Images to Stack');
-% macroFile2='tifImagesToStack.txt';
-% runMacro([filepathMacro,macroFile2],dirname);
+disp('Converting Images to Stack');
+macroFile2='tifImagesToStack.txt';
+runMacro([filepathMacro,macroFile2],dirname);
 
 %% 3. Run Morphometrics for Pill Mesh calculation 
 
@@ -220,31 +230,31 @@ BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 % Morphometrics to quickly re-segment the binary masks, contour
 % fitting, mesh calculation together with basic lineage tracking.
 
-% paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
-% params = loadParams( paramName );
-% 
-% %List of most frequently changed parameters, modify here for different
-% %images
-% params.v_imtype = 2;        % 1 = Phase; 2 = Fluorescence (internal); 3 = Fluorescence (peripheral)      
-% params.v_method = 3;        % 1 = Gradient Segmentation; 2 = Laplacian Segmentation; 
-%                             % 3 = Adaptive Threshold Segmentation; 4 = Canny Segmentation
-% params.v_simplethres=1;     % Simple threshold 
-% params.f_areamin = 10;     % Min region size
-% params.f_areamax = 200000;  % Max region size
-% params.v_prox = 0;          % Cells are in proximity
-% params.v_exclude=0;         % Exclude edge objects
-% params.f_hmin_split=2;      % Cut distance (pxls)
-% params.v_save = 1;          % Save output
-% params.v_mt_mesh=1;         % Pill mesh
-% params.v_falsepos = 1;      % Reject false positives
-% params.f_int_rej = 3;       % False positive rejection parameter
-% % Tracking parameters:
-% params.f_pert_same = 0.55;  % Fractional overlap
-% params.f_frame_diff = 4;    % Frame overlap
-% %workers = 6;                % Number of workers for parallel job
-% 
-% disp('Running Morphometrics in parallel')
-% run_parallel(dirname,params);
+paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
+params = loadParams( paramName );
+
+%List of most frequently changed parameters, modify here for different
+%types of images
+params.v_imtype = 2;        % 1 = Phase; 2 = Fluorescence (internal); 3 = Fluorescence (peripheral)      
+params.v_method = 3;        % 1 = Gradient Segmentation; 2 = Laplacian Segmentation; 
+                            % 3 = Adaptive Threshold Segmentation; 4 = Canny Segmentation
+params.v_simplethres=1;     % Simple threshold 
+params.f_areamin = 10;     % Min region size
+params.f_areamax = 200000;  % Max region size
+params.v_prox = 0;          % Cells are in proximity
+params.v_exclude=0;         % Exclude edge objects
+params.f_hmin_split=2;      % Cut distance (pxls)
+params.v_save = 1;          % Save output
+params.v_mt_mesh=1;         % Pill mesh
+params.v_falsepos = 1;      % Reject false positives
+params.f_int_rej = 3;       % False positive rejection parameter
+% Tracking parameters:
+params.f_pert_same = 0.55;  % Fractional overlap
+params.f_frame_diff = 4;    % Frame overlap
+%workers = 6;                % Number of workers for parallel job
+
+disp('Running Morphometrics in parallel')
+run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 
@@ -269,16 +279,12 @@ BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 %     end
 % end
 
-%% Clean up files (raw_im *.tif,*.mat)
-
-% Delete original and raw_im folders:
-rmdir( [dirname,filesep,'original',filesep],'s' ); 
-rmdir( [dirname,filesep,'raw_im',filesep],'s' );
 
 %% Shutting down parallel pool
 
-% poolobj = gcp('nocreate');
-% delete(poolobj);
+disp('Closing parallel pool...')
+poolobj = gcp('nocreate');
+delete(poolobj);
 
 
 %% THE END
