@@ -10,7 +10,7 @@ outDir = inDir+"Analysis"+File.separator;
 if (File.exists(outDir))
       exit("Directory already exists");
 else
-File.makeDirectory(outDir);
+      File.makeDirectory(outDir);
 filenames = getFileList(inDir); 
 
 //Batch Mode

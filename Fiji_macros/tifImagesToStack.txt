@@ -21,24 +21,27 @@ for (n = 0; n < dirnames.length; n++) {    // lists all the directories under An
             currDir2 = inDir+dirnames[n]+list[k];  // lists the directories under xy folders
             //Array.print(currDir2);
             count1++;
+
             if (endsWith(list[k],"fluor1/")){
-            run("Image Sequence...", "open=currDir2 sort");
-            name=getTitle();
-            saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif"); // save stack as .tif
+                run("Image Sequence...", "open=currDir2 sort");
+                name=getTitle();
+                saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif"); // save stack as .tif
             }
+
             if (endsWith(list[k],"phase/")){
-            run("Image Sequence...", "open=currDir2 sort");  // save stack as .tif
-            name=getTitle();
-            saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif");
+                run("Image Sequence...", "open=currDir2 sort");  // save stack as .tif
+                name=getTitle();
+                saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif");
             }
-                list2= getFileList(currDir2);  // delete all the single image files (.tif)
-                //Array.print(list2);
-                for (c=0; c<list2.length; c++) {
-                    count2++;
-                    if (startsWith(list2[c],"t")){  //this only works if all the images always start with time variable (t)
+            
+            list2= getFileList(currDir2);  // delete all the single image files (.tif)
+            //Array.print(list2);
+            for (c=0; c<list2.length; c++) {
+                count2++;
+                if (startsWith(list2[c],"t")){  //this only works if all the images always start with time variable (t)
                     ok=File.delete(currDir2+list2[c]);
-                    }
-                } 
+                }
+            } 
          }   
 }
 count3 = count2-count1;
