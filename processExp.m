@@ -43,7 +43,7 @@ macroFile1='ConvertND2toTif.txt';
 % Call MIJ for preprocessing:
 filepathMacro = getMacroPath(); %Macro Files path
 
-%variables beginning and end of the movie
+%variables beginning and end of the movie t end and t benginning
 
 runMacro([filepathMacro,macroFile1],dirname); %calls MIJ to run the Fiji macro without arguments
 
