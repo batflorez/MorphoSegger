@@ -49,6 +49,10 @@ images = dir([dirname,filesep,'*.tif*']);
 dirOriginal  = [dirname,filesep,'original',filesep] ;
 imagesInOrig = dir([dirOriginal,filesep,'*.tif*']);
 
+if ~exist(dirOriginal,'dir') % make original directory
+    mkdir(dirOriginal) ;
+end
+
 elementsTime='t';
 elementsXY ='xy';
 elementsPhase = 'c';
@@ -82,15 +86,11 @@ if ~exist('basename','var')
     channelNames = input('Please type the names of the channels as {''BF'',GFP''}:');
 end
 
-if ~exist(dirOriginal,'dir') % make original directory
-    mkdir(dirOriginal) ;
-end
 
 if isempty(imagesInOrig) % move original images
-
+    %movefile([dirname,filesep,'*.tif*'],dirOriginal); % move all images to dir original
+    system('find . -name "*.tif" -maxdepth 1 -exec mv {} ./original/ \;'); % allows to move high amount of images
     
-    movefile([dirname,filesep,'*.tif*'],dirOriginal); % move all images to dir original
-
 end
 
 images = dir([dirOriginal,filesep,'*.tif*']);

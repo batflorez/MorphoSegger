@@ -47,7 +47,7 @@ else
 end
 SE = strel('disk',3);
 
-for i = 1:num_im;
+for i = 1:num_im
     
     if CONST.parallel.show_status
         waitbar((num_im-i)/num_im,h,['Strip small cells--Frame: ',num2str(i),'/',num2str(num_im)]);
@@ -129,7 +129,7 @@ for i = 1:num_im;
     imwrite(data_c.mask_cell,dataname_mask,'Compression','none','WriteMode','append');
     
     % save the updated *seg.mat file
-    dataname=[dirname,contents(i).name]; %Uncomment if running Regular SuperSegger 
+    dataname=[dirname,contents(i).name]; 
     save(dataname,'-STRUCT','data_c');
     
     
@@ -142,8 +142,8 @@ end
 
 %Delete *_seg.mat files to save space - added by Andres Florez 04/30/20
 %comment this line if using Full SuperSegger
-disp('Deleting *_seg.mat files');
-delete( [dirname,filesep,'*_seg.mat'] );
+%disp('Deleting *_seg.mat files');
+%delete( [dirname,filesep,'*_seg.mat'] );
 
 
 end

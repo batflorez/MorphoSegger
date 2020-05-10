@@ -22,7 +22,7 @@ extension=".nd2";
 
 //Select the frames to analyze (ajdust this for each experiment)
 timeStart=1;
-timeEnd=89;
+timeEnd=108;
 
 pattern = ".*"; // for selecting all the files in the folder
 // different examples of regex-based selection 

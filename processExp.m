@@ -18,7 +18,9 @@
 % andrewflorez@gmail.com
 % Harvard University
 
-%% Steps in the pipeline
+%%          (MODIFY THIS FILE AND SAVE IT IN DATA FOLDER)                %%
+
+% Steps in the pipeline: 
 
 % 1. Preparing the files
 % 2. Segmentation
@@ -62,11 +64,12 @@ runMacro([filepathMacro,macroFile1],dirname); %calls MIJ to run the Fiji macro w
 % etc ... without basename
 
 dirname =  ([dirname,'Analysis',filesep]); %set analysis folder
+cd(dirname);
 
 basename = '';
 timeFilterBefore ='_t';
 timeFilterAfter = '.t' ;
-xyFilterBefore='0';
+xyFilterBefore='';
 xyFilterAfter='xy';
 channelNames = {'C=0','C=1'};
 
@@ -211,9 +214,9 @@ BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 %% Clean up files (raw_im *.tif,*.mat)
 
 % Delete original and raw_im folders:
-disp('Deleting files...')
-rmdir( [dirname,filesep,'original',filesep],'s' ); 
-rmdir( [dirname,filesep,'raw_im',filesep],'s' );
+% disp('Deleting files...')
+% rmdir( [dirname,filesep,'original',filesep],'s' ); 
+% rmdir( [dirname,filesep,'raw_im',filesep],'s' );
 
 
 %% Converting images to stack 
@@ -230,31 +233,31 @@ runMacro([filepathMacro,macroFile2],dirname);
 % Morphometrics to quickly re-segment the binary masks, contour
 % fitting, mesh calculation together with basic lineage tracking.
 
-paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
-params = loadParams( paramName );
-
-%List of most frequently changed parameters, modify here for different
-%types of images
-params.v_imtype = 2;        % 1 = Phase; 2 = Fluorescence (internal); 3 = Fluorescence (peripheral)      
-params.v_method = 3;        % 1 = Gradient Segmentation; 2 = Laplacian Segmentation; 
-                            % 3 = Adaptive Threshold Segmentation; 4 = Canny Segmentation
-params.v_simplethres=1;     % Simple threshold 
-params.f_areamin = 10;     % Min region size
-params.f_areamax = 200000;  % Max region size
-params.v_prox = 0;          % Cells are in proximity
-params.v_exclude=0;         % Exclude edge objects
-params.f_hmin_split=2;      % Cut distance (pxls)
-params.v_save = 1;          % Save output
-params.v_mt_mesh=1;         % Pill mesh
-params.v_falsepos = 1;      % Reject false positives
-params.f_int_rej = 3;       % False positive rejection parameter
-% Tracking parameters:
-params.f_pert_same = 0.55;  % Fractional overlap
-params.f_frame_diff = 4;    % Frame overlap
-%workers = 6;                % Number of workers for parallel job
-
-disp('Running Morphometrics in parallel')
-run_parallel(dirname,params);
+% paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
+% params = loadParams( paramName );
+% 
+% %List of most frequently changed parameters, modify here for different
+% %types of images
+% params.v_imtype = 2;        % 1 = Phase; 2 = Fluorescence (internal); 3 = Fluorescence (peripheral)      
+% params.v_method = 3;        % 1 = Gradient Segmentation; 2 = Laplacian Segmentation; 
+%                             % 3 = Adaptive Threshold Segmentation; 4 = Canny Segmentation
+% params.v_simplethres=1;     % Simple threshold 
+% params.f_areamin = 10;     % Min region size
+% params.f_areamax = 200000;  % Max region size
+% params.v_prox = 0;          % Cells are in proximity
+% params.v_exclude=0;         % Exclude edge objects
+% params.f_hmin_split=2;      % Cut distance (pxls)
+% params.v_save = 1;          % Save output
+% params.v_mt_mesh=1;         % Pill mesh
+% params.v_falsepos = 1;      % Reject false positives
+% params.f_int_rej = 3;       % False positive rejection parameter
+% % Tracking parameters:
+% params.f_pert_same = 0.55;  % Fractional overlap
+% params.f_frame_diff = 4;    % Frame overlap
+% %workers = 6;                % Number of workers for parallel job
+% 
+% disp('Running Morphometrics in parallel')
+% run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 
@@ -285,6 +288,11 @@ run_parallel(dirname,params);
 disp('Closing parallel pool...')
 poolobj = gcp('nocreate');
 delete(poolobj);
+
+%% Saving analysis parameters
+
+
+
 
 
 %% THE END
