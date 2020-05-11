@@ -45,9 +45,13 @@ macroFile1='ConvertND2toTif.txt';
 % Call MIJ for preprocessing:
 filepathMacro = getMacroPath(); %Macro Files path
 
-%variables beginning and end of the movie t end and t benginning
+% Select frames to analyze
+t_start=1;
+t_end=100;
 
-runMacro([filepathMacro,macroFile1],dirname); %calls MIJ to run the Fiji macro without arguments
+%calls MIJ to run the Fiji macro with arguments
+args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
+runMacro([filepathMacro,macroFile1],args); 
 
 %% Converting to SuperSegger naming format
 %

@@ -2,10 +2,11 @@
 // This macro prepares data for SuperSegger and Morphometrics analysis (MorphoSegger)
 // Author: Andres Florez     April 27, 2020, Harvard University
 
+args = split(getArgument(),";"); 
 
 //Select input, and create output directory
 //inDir = getDirectory("Choose input Directory");
-inDir = getArgument(); //get input directory as an argument passed by Matlab
+inDir = args[0]; //get input directory as an argument passed by Matlab
 outDir = inDir+"Analysis"+File.separator;
 if (File.exists(outDir))
       exit("Directory already exists");
@@ -20,9 +21,9 @@ setBatchMode(true);
 timePrefix="_t";
 extension=".nd2";
 
-//Select the frames to analyze (ajdust this for each experiment)
-timeStart=1;
-timeEnd=108;
+//Select the frames to analyze (define this in the processExp script)
+timeStart=args[1];
+timeEnd=args[2];
 
 pattern = ".*"; // for selecting all the files in the folder
 // different examples of regex-based selection 
