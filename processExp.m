@@ -65,7 +65,7 @@ runMacro([filepathMacro,macroFile1],dirname); %calls MIJ to run the Fiji macro w
 
 dirname =  ([dirname,'Analysis',filesep]); %set analysis folder
 cd(dirname);
-
+%Set conversion parameters based on your file names:
 basename = '';
 timeFilterBefore ='_t';
 timeFilterAfter = '.t' ;
@@ -213,10 +213,10 @@ BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 
 %% Clean up files (raw_im *.tif,*.mat)
 
-% Delete original and raw_im folders:
-% disp('Deleting files...')
-% rmdir( [dirname,filesep,'original',filesep],'s' ); 
-% rmdir( [dirname,filesep,'raw_im',filesep],'s' );
+%Delete original and raw_im folders:
+disp('Deleting files...')
+rmdir( [dirname,filesep,'original',filesep],'s' ); 
+rmdir( [dirname,filesep,'raw_im',filesep],'s' );
 
 
 %% Converting images to stack 

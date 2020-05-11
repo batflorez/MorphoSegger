@@ -118,6 +118,10 @@ for i = 1:num_im
      % remake the regions
     data_c = intMakeRegs( data_c, CONST);
     
+    % save the updated *seg.mat file
+    dataname=[dirname,contents(i).name]; 
+    save(dataname,'-STRUCT','data_c');
+    
     %It saves the mask here for further Mesh calculation and tracking in
     %Morphometrics:    - added by Andres Florez on 04/16/2020
    
@@ -128,9 +132,11 @@ for i = 1:num_im
     disp('BatchSuperSeggerOpti : Saving binary mask1 as .tif');
     imwrite(data_c.mask_cell,dataname_mask,'Compression','none','WriteMode','append');
     
-    % save the updated *seg.mat file
-    dataname=[dirname,contents(i).name]; 
-    save(dataname,'-STRUCT','data_c');
+    %Delete *_seg.mat files to save space - added by Andres Florez 04/30/20
+    %comment this line if using Full SuperSegger
+    %disp('Deleting *_seg.mat files');
+    %delete( [dirname,filesep,'*_seg.mat'] );
+    
     
     
 end
@@ -138,12 +144,6 @@ end
 if CONST.parallel.show_status
     close(h);
 end
-
-
-%Delete *_seg.mat files to save space - added by Andres Florez 04/30/20
-%comment this line if using Full SuperSegger
-%disp('Deleting *_seg.mat files');
-%delete( [dirname,filesep,'*_seg.mat'] );
 
 
 end

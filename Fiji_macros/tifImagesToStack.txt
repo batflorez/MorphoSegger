@@ -38,7 +38,7 @@ for (n = 0; n < dirnames.length; n++) {    // lists all the directories under An
             //Array.print(list2);
             for (c=0; c<list2.length; c++) {
                 count2++;
-                if (startsWith(list2[c],"t")){  //this only works if all the images always start with time variable (t)
+                if (startsWith(list2[c],"t") && endsWith(list2[c], ".tif")){  //this only works if all the images always start with time variable (t) and ends with .tif
                     ok=File.delete(currDir2+list2[c]);
                 }
             } 
