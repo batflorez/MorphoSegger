@@ -293,12 +293,6 @@ disp('Closing parallel pool...')
 poolobj = gcp('nocreate');
 delete(poolobj);
 
-%% Saving analysis parameters
-
-
-
-
-
 %% THE END
 
 t1=toc;
