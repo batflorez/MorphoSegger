@@ -1,4 +1,4 @@
-function [foci4,foci2,tb,tc] = cell_cycle2(foci,foci3_N)
+function [foci4,foci2,foci3_N,tb,tc] = cell_cycle2(foci,foci3_N)
 
 
 tc1=0;

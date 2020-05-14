@@ -1,7 +1,7 @@
 function  [salida]=fun_anal4N(Ncell,frame,name_morph,limites,param_fit)
 
 % This parameter may be altered 55-85
-Diego_parameter=62.5;
+Diego_parameter=65;
 
 list_3 = dir('*.tif');
 
@@ -15,7 +15,7 @@ mkdir(name)
     
     for N=1:Ncell
                 
-    close all              
+    %close all              
                  fit_data=zeros(1,size(tsStack,2));
                  d_up=zeros(1,size(tsStack,2));
                  d_bt=zeros(1,size(tsStack,2));
@@ -355,6 +355,8 @@ mkdir(name)
                             
                             name_aux=strcat(name,'/');
                             
+                            n_f=strcat(name_aux,label,'.fig');
+                            
                             name_file=strcat(name_aux,name_file);
 
                             tiempo=5*[0:1:length(l_cell)-1]; 
@@ -395,7 +397,7 @@ mkdir(name)
                             fit_data(2)=gof.rsquare;
                  
 
-                            [foci4, ~, tb, tc]=cell_cycle_main(foci,foci3);
+                            [foci4, ~, tb, tc, tau]=cell_cycle_main2(foci,foci3,n_f);
                             
                             %First Row: cell length.
                             %2: Fitting: Doubling time and Rsqr. 
@@ -412,11 +414,11 @@ mkdir(name)
                             %                     -3: starts Ctime:2   
                             %                     -4: starts Btime:1 
                             
-                            output=[l_cell;fit_data;d_up;d_bt;foci3;foci;tb;tc;foci4];
+                            output=[l_cell;fit_data;d_up;d_bt;foci3;foci;tb;tc;tau;foci4];
 
                             salida(N).out=output;
                             
-                            
+                          
 
                             I_a=adapthisteq(mat2gray(kymo));
                               

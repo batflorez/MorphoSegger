@@ -1,4 +1,4 @@
-function [foci4,foci2,tb,tc] = cell_cycle(foci,foci3_N)
+function [foci4,foci2,foci3_N,tb,tc] = cell_cycle(foci,foci3_N)
 
 
 tc1=0;
@@ -22,6 +22,8 @@ tb32=0;
 
 tb=zeros(1,length(foci));
 tc=zeros(1,length(foci));
+%tc2=zeros(1,length(foci));
+
 
 foci4=zeros(1,length(foci));
 
@@ -567,8 +569,19 @@ cont=1;
 
             end
             
-            
-            
+    
+    foci4=foci_n;
+    
+    foci4(aux)=0; 
+    
+%     XXX=[x',foci_n'];
+%     
+%     
+%     
+%     [idx,C] = kmeans(XXX,5,'MaxIter',100);
+%     
+%     for
+%             
     tb(1)=tb1;
     tb(2)=tb2;
     tb(3)=tb4;
@@ -585,7 +598,7 @@ cont=1;
     
     foci4=foci_n;
     
-    foci4(aux)=0;
+    foci4(aux)=0; 
    
     
     aux_fn=find(foci_n>=0, 1);
