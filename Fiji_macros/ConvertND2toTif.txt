@@ -43,7 +43,7 @@ for (i = 0; i < filenames.length; i++) {
         fluorName= getTitle();
         titleFluor = replace(fluorName, extension, "xy"); // Adjust the renaming according to the initial ND2 file name
         rename(titleFluor);
-        run("Gaussian Blur...", "sigma=1 stack");
+        //run("Gaussian Blur...", "sigma=1 stack");
         run("Image Sequence... ", "format=TIFF name=["+titleFluor+timePrefix+"] save=&outDir");
         //saveAs("Tiff", outDir+titleFluor);
         close();
