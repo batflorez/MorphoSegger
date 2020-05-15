@@ -1,27 +1,30 @@
 function FociAnalysis(dirname,paramFit)
 
 
+
 %param_fit=50; %% Minimo de puntos para considerar el fit exponencial valido. 
 %list_1 = dir('*xy*');% todas las xy carpetas
 
-contents = dir([dirname,'xy*']); %List al xy folders
+clearvars 
+contents = dir([dirname,'xy*']); %List all xy folders
 num_dir_tmp = numel(contents);
 nxy = [];
 num_xy = 0;
 
-%Creates a struct for all seg directories 
+%Creates a struct for all fluor1 directories 
+
 dirnamelist=cell(1,num_dir_tmp);
 for i = 1:num_dir_tmp
     if (contents(i).isdir) && (numel(contents(i).name) > 2)
     num_xy = num_xy+1;
     nxy = [nxy, str2double(contents(i).name(3:end))];
-    dirnamelist{i} = [dirname,contents(i).name,filesep,'seg'];
+    dirnamelist{i} = [dirname,contents(i).name,filesep,'fluor1'];%Set fluor1 channel as the green channel
     end
 end
 
  
-%parfor?
-for p=1:1:length(list_1)
+
+for p= 1:num_xy
     
     name_root=list_1(p).name; 
     name_folder=strcat(name_root,'/morphometrics');

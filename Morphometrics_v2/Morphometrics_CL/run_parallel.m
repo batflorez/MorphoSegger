@@ -10,7 +10,7 @@ function run_parallel(dirname, params)
 
 %dirname=pwd;
 %dirname=fixDir(dirname);
-contents = dir([dirname,'xy*']); %List al xy folders
+contents = dir([dirname,'xy*']); %List all xy folders
 num_dir_tmp = numel(contents);
 nxy = [];
 num_xy = 0;
