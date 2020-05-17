@@ -47,7 +47,7 @@ filepathMacro = getMacroPath(); %Macro Files path
 
 % Select frames to analyze
 t_start=1;
-t_end=100;
+t_end=89;
 
 %calls MIJ to run the Fiji macro with arguments
 args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
@@ -237,8 +237,8 @@ runMacro([filepathMacro,macroFile2],dirname);
 % Morphometrics to quickly re-segment the binary masks, contour
 % fitting, mesh calculation together with basic lineage tracking.
 
-% paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
-% params = loadParams( paramName );
+paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
+params = loadParams( paramName );
 % 
 % %List of most frequently changed parameters, modify here for different
 % %types of images
@@ -260,8 +260,8 @@ runMacro([filepathMacro,macroFile2],dirname);
 % params.f_frame_diff = 4;    % Frame overlap
 % %workers = 6;                % Number of workers for parallel job
 % 
-% disp('Running Morphometrics in parallel')
-% run_parallel(dirname,params);
+disp('Running Morphometrics in parallel')
+run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 

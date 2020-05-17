@@ -34,7 +34,7 @@ end
 
 % move morphometrics files to independent folder
 for q = 1:num_xy
-    movefile([dirnamelist{q},filesep,'*.mat'], [dirname,contents(q).name,filesep,'morphometrics']);
+    movefile([dirnamelist{q},filesep,'*_CONTOURS*.mat'], [dirname,contents(q).name,filesep,'morphometrics']);
 end
 
 disp('Parallel Morphometrics done.')
