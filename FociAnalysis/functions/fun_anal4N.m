@@ -1,16 +1,9 @@
-function  [salida]=fun_anal4N(Ncell,frame,stack,morphoFile,limits,paramFit)
+function  [salida]=fun_anal4N(stackname,Ncell,frame,morphoFile,limits,paramFit)
 
-% This parameter may be altered 55-85
+% This parameter may be altered 55-85 - we need more info here
 Dparameter=65;
-
-list_3 = dir('*.tif');
-
-stack=list_3(1).name;
-
-tsStack = tiffread(stack);
-
+tsStack = tiffread(stackname);
 name=morphoFile(1:end-4);
-
 mkdir(name)
     
     for N=1:Ncell
@@ -421,111 +414,6 @@ mkdir(name)
 
     end
     
-    %cd ../../..
-    
-    %cd('/cell_cycle')
-    
-    %arch_nombre=strcat(name,'_OUTPUT_FOCI.mat');
-    
-    %save(arch_nombre,'salida');
-    
-    %cd ..
-  
     
 end
     
-
-
-    
-
-
-    % d_up(d_up>10)=NaN;
-    % 
-    % d_bt(d_bt>10)=NaN;
-    % 
-    % d_up(d_up==0)=NaN;
-    % 
-    % d_bt(d_bt==0)=NaN;
-    % 
-    % l_cell(l_cell==0)=NaN;
-
-    % figure
-    % 
-    % plot(d_up(1,:))
-    % 
-    % hold on 
-    % 
-    % plot(d_bt(1,:))
-    % 
-    % hold off
-    % 
-    %figure
-    % 
-    %plot(l_cell(1,:))
-    % i=1;
-    % j=1;
-    % xs=round(frame(1).object(1).Xcont);
-    % ys=round(frame(1).object(1).Ycont);
-    % 
-    %  figure
-    % %   
-      %imshow(I)
-    %  
-    %  hold on
-
-    %  scatter(x_pole_bt(end),y_pole_bt(end))
-    %  
-    %  figure
-    % 
-    %  imshow(imadjust(Im2))
-    %  hold on
-      %plot(frame(k).object(N).centerline(:,1),frame(k).object(N).centerline(:,2),'b','linewidth',2)
-    %  plot(y,x);
-      
-    %  plot(y+delta_y,x+delta_x);
-      
-    %  plot(y-delta_y,x-delta_x);
-     %imshow(BWW)
-     %hold on
-     %plot(a(1:2:end),a(2:2:end),'r+')
-
-
-
-    %   %xs=round(xs);
-    %   %ys=round(ys);
-    %   
-    %   aux=find(ys(10)==ys);
-    %   
-    % 
-    %   if length(aux)==1
-    %        loc=xs(aux(1));
-    %   elseif length(aux)>1
-    %       loc=xs(aux(1)):1:xs(aux(end));
-    %   end    
-    %       
-    %  
-    %   loc_y=ys(aux(1))*ones(1,length(loc));
-     %  scatter(center_line(1,:),ys)
-    %   
-    %   scatter(y_c,x_c)
-    %  
-    % 
-    %figure
-    %plot(foci)
-
-    %hold on
-
-    %plot(foci2)
-
-    % figure
-    % 
-    % plot(d_up)
-    % 
-    % hold on
-    % 
-    % plot(d_bt)
-
-
-
-
-

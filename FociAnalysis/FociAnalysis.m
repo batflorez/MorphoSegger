@@ -1,4 +1,4 @@
-function FociAnalysis(dirname,paramFit)
+function FociAnalysis(paramFit)
 
 %%%%% Encuentra el frame inicial y final por celula con la
     %%%%% mayor longitud in-interrumpida de frames. Genera la matrix
@@ -20,11 +20,14 @@ num_xy = 0;
 %% Creates a struct for fluor1 structures and the tif stack
 
 dirnamelist=cell(1,num_dir_tmp);
+dirnamelist2=cell(1,num_dir_tmp);
+
 for i = 1:num_dir_tmp
     if (contents(i).isdir) && (numel(contents(i).name) > 2)
     num_xy = num_xy+1;
     nxy = [nxy, str2double(contents(i).name(3:end))];
     dirnamelist{i} = [dirname,contents(i).name,filesep,'morphometrics'];
+    dirnamelist2{i} = [dirname,contents(i).name,filesep,'fluor1'];
     end
 end
 
@@ -37,12 +40,18 @@ for p= 1:num_xy
     morphoFiles = dir([dirnamelist{p},filesep,'*pill_MESH.mat']);
     morphoFile= [morphoFiles.folder,filesep, morphoFiles.name];
     load(morphoFile);
-   
+    
+    %get stack name for fluorescence data
+    stacknames = dir([dirnamelist2{p},filesep,'*.tif']);
+    stackname= [stacknames.folder,filesep, stacknames.name];
+    
     %set variables
     ind=zeros(Nframe,Ncell);
     cont=zeros(Ncell, Nframe);
     limits=zeros(Ncell,2);
 
+    
+    %We maybe can use the table that generates morphometrics already
     for N=1:Ncell
         for fr=1:Nframe
             allCN = [frame(fr).object.cellID]; % comma separated list expansion 
@@ -57,7 +66,7 @@ for p= 1:num_xy
 
     for j=1:Ncell
         
-         maximo=Nframe;
+         maximo=Nframe; % what is this for?
          min=1;
          
          temp=find(cont(j,:)==0);
@@ -83,7 +92,7 @@ for p= 1:num_xy
    
     
     %Spot detection and Cell cycle analysis        
-    CCResults=fun_anal4N(Ncell,frame,morphoFile,limits,paramFit);
+    CCResults=fun_anal4N(stackname,Ncell,frame,morphoFile,limits,paramFit);
 
     %Save results 
     dataname=[dirname,filesep,'cell_cycle',filesep,morphoFile(1:end-22),'CC_RESULTS.mat']; 
@@ -93,3 +102,8 @@ for p= 1:num_xy
      
  end       
 end
+
+% 
+% function data = loaderInternal( filename )
+% data = load( filename );
+% end
