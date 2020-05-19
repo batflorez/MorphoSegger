@@ -1,7 +1,7 @@
 function  [salida]=fun_anal4N(Ncell,frame,stack,morphoFile,limits,paramFit)
 
 % This parameter may be altered 55-85
-Diego_parameter=65;
+Dparameter=65;
 
 list_3 = dir('*.tif');
 
@@ -275,7 +275,7 @@ mkdir(name)
                                           end
                         % 
 
-                                          if sum(abs(diff(bbb)))>Diego_parameter
+                                          if sum(abs(diff(bbb)))>Dparameter
 
                                              contar=contar+1;    
 

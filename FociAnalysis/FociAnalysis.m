@@ -83,18 +83,13 @@ for p= 1:num_xy
    
     
     %Spot detection and Cell cycle analysis        
-    fociResults=fun_anal4N(Ncell,frame,morphoFile,limits,paramFit);
+    CCResults=fun_anal4N(Ncell,frame,morphoFile,limits,paramFit);
 
     %Save results 
-    dataname=morphoFile(1:end-4); 
-    arch_nombre=strcat(dataname,'_OUTPUT_FOCI.mat');
-    arch_nombre=strcat('cell_cycle/',arch_nombre);
-    save(arch_nombre,'fociResults');
+    dataname=[dirname,filesep,'cell_cycle',filesep,morphoFile(1:end-22),'CC_RESULTS.mat']; 
+    save(dataname,'CCResults');
 
+ 
      
  end       
 end
-
-% function data = loaderInternal( filename )
-% data = load( filename );
-% end
