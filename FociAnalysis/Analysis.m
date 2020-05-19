@@ -1,6 +1,6 @@
 function FociAnalysis()
 
-
+    
 param_fit=50; %% Minimo de puntos para considerar el fit exponencial valido. 
 list_1 = dir('*xy*');% todas las xy carpetas
  
@@ -14,10 +14,7 @@ for p=1:1:length(list_1)
     name_morph=list_2(1).name;
     load(name_morph);
 
-    %%%%% Encuentra el frame inicial y final por celula con la
-    %%%%% mayor longitud in-interrumpida de frames. Genera la matrix
-    %%%%% limites. Cada fila es una celula. Esto podria ser una
-    %%%%% funcion?
+    
 
     %%%%% Inicia aca
 
@@ -64,25 +61,17 @@ for p=1:1:length(list_1)
 
             %%%% Termina aca. 
             
-            
+    %Spot detection and Cell cycle analysis
     salida=fun_anal4N(Ncell,frame,name_morph,limites,param_fit);
 
-            %fun_ph_growth(Ncell,name,size(tsStack,2),limites,param_fit);
-            
-    cd ../..
-            
-            %cd('cell_cycle') 
+    %Saving results
     name=name_morph(1:end-4); 
     arch_nombre=strcat(name,'_OUTPUT_FOCI.mat');
     arch_nombre=strcat('cell_cycle/',arch_nombre);
     save(arch_nombre,'salida');
 
-    %cd ..
-%            
-    clear frame
+ 
      
  end       
-               
-
 end
 

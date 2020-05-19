@@ -1,4 +1,4 @@
-function  [salida]=fun_anal4N(Ncell,frame,name_morph,limites,param_fit)
+function  [salida]=fun_anal4N(Ncell,frame,stack,morphoFile,limits,paramFit)
 
 % This parameter may be altered 55-85
 Diego_parameter=65;
@@ -9,7 +9,7 @@ stack=list_3(1).name;
 
 tsStack = tiffread(stack);
 
-name=name_morph(1:end-4);
+name=morphoFile(1:end-4);
 
 mkdir(name)
     
@@ -32,8 +32,8 @@ mkdir(name)
                  tb=zeros(1,length(foci));
                  tc=zeros(1,length(foci));
         
-                 inicio=limites(N,1);
-                 fin=limites(N,2);
+                 inicio=limits(N,1);
+                 fin=limits(N,2);
 
                  cont=fin-inicio;
 
@@ -53,25 +53,16 @@ mkdir(name)
                      %%%start
                         
                      try
-
                         x_ztr=round(frame(fin).object(ind).centerline(:,2));
-
                      catch
-
                         warning('Problem');
-
                         continue
-
                      end
 
                      y_ztr=round(frame(fin).object(ind).centerline(:,1));
-
                      l_k=round(length(x_ztr)/2);
-
                      kymo=zeros(3*cont,length(x_ztr));
-
                      temp=1;
-
                 end
                     %%%ends
                     
@@ -82,10 +73,8 @@ mkdir(name)
                     
                                     
                                 try
-
                                     xs=round(frame(fin).object(ind).Xcont);
                                     ys=round(frame(fin).object(ind).Ycont);
-
                                     label=num2str(N);
                                     catch
                                     warning(label)
@@ -124,11 +113,8 @@ mkdir(name)
                     %%%for for each frame each cell. Foci counting
                                 
                     for k=inicio:fin
-
-                    
                     
                                try
-
                                     allCN = [frame(k).object.cellID]; % comma separated list expansion 
                                     ind = find(allCN == N);
 
@@ -361,7 +347,7 @@ mkdir(name)
 
                             tiempo=5*[0:1:length(l_cell)-1]; 
 
-                            [fit, gof, t_t]=createFit_exp(tiempo, l_cell,param_fit);
+                            [fit, gof, t_t]=createFit_exp(tiempo, l_cell,paramFit);
                             
                             if t_t==1
                                 
