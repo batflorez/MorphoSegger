@@ -265,26 +265,7 @@ run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 
-%make cell cycle dir
-% loop through 
-% parfor
 
-% file_filter = '*.tif';
-% dirname_xy = fixDir(dirname_xy);
-% 
-% % Reset n values in case directories have already been made.
-% contents = dir([dirname_xy,'fluor*']);
-% num_dir_tmp = numel(contents);
-% nc = 1;
-% num_c = 1;
-% 
-% % reset values for nc
-% for i = 1:num_dir_tmp
-%     if (contents(i).isdir) && (numel(contents(i).name) > numel('fluor'))
-%         num_c = num_c+1;
-%         nc = [nc, str2double(contents(i).name(numel('fluor')+1:end))+1];
-%     end
-% end
 
 
 %% Shutting down parallel pool

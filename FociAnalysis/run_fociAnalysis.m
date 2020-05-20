@@ -24,11 +24,10 @@ function run_fociAnalysis(dirname,paramFit)
 %                     -3: starts Ctime:2   
 %                     -4: starts Btime:1 
 
-
+%clearvars 
 dirname=fixDir(dirname); %once i join this code i wont need it
 contents = dir([dirname,'xy*']); %List all xy folders
 num_dir_tmp = numel(contents);
-nxy = [];
 num_xy = 0;
 
 %% Creates a struct for fluor1 structures and the tif stack
@@ -39,7 +38,6 @@ dirnamelist2=cell(1,num_dir_tmp);
 for i = 1:num_dir_tmp
     if (contents(i).isdir) && (numel(contents(i).name) > 2)
     num_xy = num_xy+1;
-    nxy = [nxy, str2double(contents(i).name(3:end))];
     dirnamelist{i} = [dirname,contents(i).name,filesep,'morphometrics'];
     dirnamelist2{i} = [dirname,contents(i).name,filesep,'fluor1'];
     end
@@ -80,8 +78,8 @@ for p= 1:num_xy
 
     for j=1:Ncell
         
-         maximo=Nframe; % what is this for?
-         min=1;
+         %maximo=Nframe; % what is this for?
+         %min=1;
          
          temp=find(cont(j,:)==0);
          if isempty(temp)==1
@@ -102,8 +100,6 @@ for p= 1:num_xy
           end
          end
     end
-
-   
     
     %Spot detection and Cell cycle analysis        
     CCResults = fociAnalysis(stackname,Ncell,frame,morphoFile,limits,paramFit);
@@ -114,5 +110,5 @@ for p= 1:num_xy
 
  
      
- end       
+end       
 end
