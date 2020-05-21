@@ -38,6 +38,7 @@ for q = 1:num_xy
 end
 
 disp('Parallel Morphometrics done.')
+clearvars -except dirname
 % %workers=6;
 % if  workers % shutting down parallel pool     
 %     delete(poolobj);

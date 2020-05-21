@@ -1,12 +1,20 @@
-function  CCResults = fociAnalysis(stackname,Ncell,frame,morphoFile,limits,paramFit)
+function  CCResults = fociAnalysis(dirname,stackname,Ncell,frame,limits,paramFit)
 
+% this one comes from the old fun_anal4N
 % This parameter may be altered 55-85 - we need more info here
+
 Dparameter=65;
 tsStack = tiffread(stackname);
-name=morphoFile(1:end-4);
-mkdir(name)
-name=fixDir(name); %need to include this variable
-%add XY info to the names
+xy_pos = char(regexp(stackname,'(_xy\w*).','match'));
+xy_pos = [erase(xy_pos,"."),'_'];
+
+kymofolder=[dirname,filesep,'foci_analysis',filesep,'kymographs',filesep]; 
+gc_fitfolder=[dirname,filesep,'foci_analysis',filesep,'gc_fits',filesep]; 
+kmeansfolder=[dirname,filesep,'foci_analysis',filesep,'kmeans',filesep];
+
+mkdir(kymofolder);
+mkdir(gc_fitfolder);
+mkdir(kmeansfolder);
     
 for N=1:Ncell
              
@@ -36,8 +44,6 @@ for N=1:Ncell
      if cont<30
           continue
      else  
-
-
          %%% Build up the mother trajectory for kymograph. It uses 
          %%% the centerline of each cell for the last frame 
 
@@ -69,11 +75,9 @@ for N=1:Ncell
         label=num2str(N);
         %Add label kymo, fit, etc
 
-        catch
-        warning(label)
-
-        continue
-
+    catch
+            warning(label)
+            continue
     end
 
 
@@ -115,8 +119,7 @@ for N=1:Ncell
                      warning(label)
                      continue
                end
-    
-
+   
               % pole calculations
                pole_2=frame(k).object(ind).pole2; 
 
@@ -152,7 +155,6 @@ for N=1:Ncell
                 loc=find(Im2==0);
                 loc1=find(Im2==1);
 
-  
                 % Generate the 3 trayectories based on the centerline (and
                 % 2 parallel trajectories). The signals is integrated for
                 % thress trajectories. It is referenced to the main
@@ -202,8 +204,6 @@ for N=1:Ncell
                       end
                 end
 
-
-
                foci(k)=contar;
                %%referencing to mother trajectory
                mitad=round(length(b)/2);
@@ -222,15 +222,13 @@ for N=1:Ncell
 
                end
 
-               %%%% End Diego's Foci counting
+               
 
                %%%% Wavelet counting
-
                AA(loc)=0;                                 
                AA=AA(yMin:yMax,xMin:xMax);
                AB=AB(yMin:yMax,xMin:xMax);                                
                foci3(k)=wavelet_foci(AA,AB);
-
                %%%% End wavelet 
                temp=temp+1;
         end
@@ -238,29 +236,17 @@ for N=1:Ncell
 
     aux2=find(l_cell==0);
     l_cell(aux2)=NaN;         %Modify this
-
-    %from here 
-    name_file=strcat(label,'.fig');
-
-    name_file=strcat('_',name_file);
-
-    name_file=strcat(name,name_file);
-
-    %name_aux=strcat(name,'/'); %check this 
-
-    n_f=strcat(name,label,'.fig'); % clusterings
-
-    %name_file=strcat(name,name_file);
-
+    
     tiempo=5*[0:1:length(l_cell)-1]; 
-
     [fit, gof, t_t]=createFit_exp(tiempo, l_cell,paramFit);
 
     if t_t==1      
         continue                                
     end    
-
-    savefig(name_file); %save plot, add off                         
+    
+    % Saving growth curves and exponential fits
+    gc_fitname  = [gc_fitfolder,'gcfit',xy_pos,'cell_',label,'_','.fig'];
+    savefig(gc_fitname); %save plot                   
     close all
 
     d_up=[sqrt(diff(x_pole_up).^2+diff(y_pole_up).^2),NaN];
@@ -273,25 +259,20 @@ for N=1:Ncell
 
     fit_data(1)=log(2)/fit.b;
     fit_data(2)=gof.rsquare;
-
-    [foci4, ~, tb, tc, tau]=cell_cycle_main2(foci,foci3,n_f);
+    
+    %Performing clustering on foci data
+    kmeans_name = [kmeansfolder,'kmeansFoci',xy_pos,'cell_',label,'_','.fig'];
+    [foci4, ~, tb, tc, tau]=cell_cycle_main2(foci,foci3,kmeans_name);
     output=[l_cell;fit_data;d_up;d_bt;foci3;foci;tb;tc;tau;foci4];
     CCResults(N).out=output;
 
+    % Generating and saving kymographs
+    kymo_name = [kymofolder,'kymograph',xy_pos,'cell_',label,'_','.tif'];
     I_a=adapthisteq(mat2gray(kymo));
-    %change color kymographs
-    %check folders here
-    file_n=strcat(name,'_');
-    file_n=strcat(file_n,num2str(N));        
-    file_n=strcat(file_n,'.tiff');
-    % file_n=strcat(name,file_n);
-    imwrite(I_a,file_n);
+    imwrite(I_a,kymo_name);
 
-                        %cd ..       
 
 
 end
-    
-    
 end
     

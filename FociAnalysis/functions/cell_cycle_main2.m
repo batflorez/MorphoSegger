@@ -1,4 +1,4 @@
-function [foci4,foci2,tb,tc,tau_cluster] = cell_cycle_main2(foci,foci3_N,n_f)
+function [foci4,foci2,tb,tc,tau_cluster] = cell_cycle_main2(foci,foci3_N,kmeans_name)
 
 foci_t=foci;
 aux=find(foci_t>=0);  
@@ -14,7 +14,7 @@ else
 end
 
 tau_cluster=round(clustering_kmeans((foci+foci3_N)/2));
-savefig(n_f); %save clustering figures
+savefig(kmeans_name); %save clustering figures
 
 close all
                     
