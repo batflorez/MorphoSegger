@@ -10,7 +10,7 @@ function run_parallel(dirname, params)
 
 %dirname=pwd;
 %dirname=fixDir(dirname);
-contents = dir([dirname,'xy*']); %List al xy folders
+contents = dir([dirname,'xy*']); %List all xy folders
 num_dir_tmp = numel(contents);
 nxy = [];
 num_xy = 0;
@@ -34,10 +34,11 @@ end
 
 % move morphometrics files to independent folder
 for q = 1:num_xy
-    movefile([dirnamelist{q},filesep,'*.mat'], [dirname,contents(q).name,filesep,'morphometrics']);
+    movefile([dirnamelist{q},filesep,'*_CONTOURS*.mat'], [dirname,contents(q).name,filesep,'morphometrics']);
 end
 
 disp('Parallel Morphometrics done.')
+clearvars -except dirname
 % %workers=6;
 % if  workers % shutting down parallel pool     
 %     delete(poolobj);

@@ -47,7 +47,7 @@ filepathMacro = getMacroPath(); %Macro Files path
 
 % Select frames to analyze
 t_start=1;
-t_end=80;
+t_end=89;
 
 %calls MIJ to run the Fiji macro with arguments
 args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
@@ -239,9 +239,9 @@ runMacro([filepathMacro,macroFile2],dirname);
 
 paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
 params = loadParams( paramName );
-
-%List of most frequently changed parameters, modify here for different
-%types of images
+% 
+% %List of most frequently changed parameters, modify here for different
+% %types of images
 % params.v_imtype = 2;        % 1 = Phase; 2 = Fluorescence (internal); 3 = Fluorescence (peripheral)      
 % params.v_method = 3;        % 1 = Gradient Segmentation; 2 = Laplacian Segmentation; 
 %                             % 3 = Adaptive Threshold Segmentation; 4 = Canny Segmentation
@@ -258,33 +258,20 @@ params = loadParams( paramName );
 % % Tracking parameters:
 % params.f_pert_same = 0.55;  % Fractional overlap
 % params.f_frame_diff = 4;    % Frame overlap
-%workers = 6;                % Number of workers for parallel job
-
+% %workers = 6;                % Number of workers for parallel job
+% 
 disp('Running Morphometrics in parallel')
 run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 
-%make cell cycle dir
-% loop through 
-% parfor
+paramFit=50;     % Consecutive points for a single cell to include the trajectory
+Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
+exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
+noiseTh=8;       % Noise threshold for wavelet detection
 
-% file_filter = '*.tif';
-% dirname_xy = fixDir(dirname_xy);
-% 
-% % Reset n values in case directories have already been made.
-% contents = dir([dirname_xy,'fluor*']);
-% num_dir_tmp = numel(contents);
-% nc = 1;
-% num_c = 1;
-% 
-% % reset values for nc
-% for i = 1:num_dir_tmp
-%     if (contents(i).isdir) && (numel(contents(i).name) > numel('fluor'))
-%         num_c = num_c+1;
-%         nc = [nc, str2double(contents(i).name(numel('fluor')+1:end))+1];
-%     end
-% end
+disp('Running Foci Analysis')
+run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep,Dparameter,exp_cut,noiseTh)
 
 
 %% Shutting down parallel pool
