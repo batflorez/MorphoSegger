@@ -1,20 +1,16 @@
-function  CCResults = fociAnalysis(dirname,stackname,Ncell,frame,limits,paramFit,timeStep)
+function  CCResults = fociAnalysis(stackname,kymofolder,gc_fitfolder,kmeansfolder,fociresfolder,Ncell,frame,limits,paramFit,timeStep)
 
-% this one comes from the old fun_anal4N
-% This parameter may be altered 55-85 - we need more info here
+%% Parameters:
 
-Dparameter=65;
+Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
+exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
+noiseTh=8;       % Noise threshold for wavelet detection
+cellThres=30;    % Consecutive points for a single cell to include the trajectory
+
+%%
 tsStack = tiffread(stackname);
 xy_pos = char(regexp(stackname,'(_xy\w*).','match'));
 xy_pos = [erase(xy_pos,"."),'_'];
-
-kymofolder=[dirname,filesep,'foci_analysis',filesep,'kymographs',filesep]; 
-gc_fitfolder=[dirname,filesep,'foci_analysis',filesep,'gc_fits',filesep]; 
-kmeansfolder=[dirname,filesep,'foci_analysis',filesep,'kmeans_foci',filesep];
-
-mkdir(kymofolder);
-mkdir(gc_fitfolder);
-mkdir(kmeansfolder);
     
 for N=1:Ncell
              
@@ -32,18 +28,18 @@ for N=1:Ncell
      foci4=zeros(1,size(tsStack,2)); 
      tb=zeros(1,length(foci));
      tc=zeros(1,length(foci));
-     a=[];
-     b=[];
+     a1=[];
+     a2=[];
+     a3=[];
      
      start=limits(N,1);
      finish=limits(N,2);
-
      cont=finish-start;
 
      allCN = [frame(finish).object.cellID]; %finding ids per cell 
      ind = find(allCN == N);
 
-     if cont<30
+     if cont<cellThres  %consecutive points for a single cell to include the trajectory
           continue
      else  
          %%% Build up the mother trajectory for kymograph. It uses 
@@ -180,10 +176,13 @@ for N=1:Ncell
                 a2=double(I(lin_ind2));
                 a3=double(I(lin_ind3));
                 a=a1+a2+a3;
-                
-                
                 aa=A(lin_ind);
-                b=sgolayfilt(a,4,11); 
+                
+                 try
+                    b=sgolayfilt(a,4,11); 
+                 catch
+                    continue
+                 end
 
                 [pks1,locs1]=findpeaks(b,'MinPeakDistance',5);
                 counter=0;
@@ -225,7 +224,7 @@ for N=1:Ncell
                AA(loc)=0;                                 
                AA=AA(yMin:yMax,xMin:xMax);
                AB=AB(yMin:yMax,xMin:xMax);                                
-               foci3(k)=wavelet_foci(AA,AB);
+               foci3(k)=wavelet_foci(AA,AB,noiseTh);
                %%%% End wavelet 
                temp=temp+1;
         end
@@ -235,7 +234,7 @@ for N=1:Ncell
     l_cell(aux2)=NaN;         %Modify this
     
     time=timeStep*(0:1:length(l_cell)-1); 
-    [fit, gof, t_t]=createFit_exp(time, l_cell,paramFit);
+    [fit, gof, t_t]=createFit_exp(time, l_cell,paramFit,exp_cut);
 
     if t_t==1      
         continue                                
@@ -268,8 +267,14 @@ for N=1:Ncell
     I_a=adapthisteq(mat2gray(kymo));
     imwrite(I_a,kymo_name);
 
-
+    %Save results 
+       
 
 end
+
+foci_name=[fociresfolder,'cc_res',xy_pos,'.mat']; 
+save(foci_name,'CCResults');
+
 end
+
     

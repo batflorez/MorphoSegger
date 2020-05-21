@@ -1,4 +1,4 @@
-function [fitresult, g_fit, t_t] = createFit_exp(x, a,p_fit)
+function [fitresult, g_fit, t_t] = createFit_exp(x, a,p_fit,exp_cut)
 %CREATEFIT1(X,A)
 %  Create a fit.
 %
@@ -50,7 +50,7 @@ function [fitresult, g_fit, t_t] = createFit_exp(x, a,p_fit)
                 
         end
 
-loc_a=find(xx>65);
+loc_a=find(xx>exp_cut); % Takes only 65 pixels onwards to fit the exponential
 
 xx=xx(loc_a);
 aa=aa(loc_a);      

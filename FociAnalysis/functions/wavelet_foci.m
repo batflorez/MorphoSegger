@@ -1,4 +1,4 @@
-function [nfoci] = wavelet_foci(rawData,rawData1)
+function [nfoci] = wavelet_foci(rawData,rawData1,noiseTh)
 % Script to run SMT_spotDetect on a stack IP(:, :, x) with x planes. 
 % Comments below is valid for cell population images 
 %
@@ -58,7 +58,7 @@ display = true;
 plane = 2;
 do_noiseROI = false;
 do_autoDetectColony = false;
-noiseTh = 8;
+%noiseTh = 8;
 
 %%
 points = [];

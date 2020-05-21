@@ -265,7 +265,10 @@ run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 
+paramFit=50;
 
+disp('Running Foci Analysis')
+run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep)
 
 
 %% Shutting down parallel pool

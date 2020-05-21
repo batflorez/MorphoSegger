@@ -47,7 +47,14 @@ end
 
 %% Results folder
 
+kymofolder=[dirname,filesep,'foci_analysis',filesep,'kymographs',filesep]; 
+gc_fitfolder=[dirname,filesep,'foci_analysis',filesep,'gc_fits',filesep]; 
+kmeansfolder=[dirname,filesep,'foci_analysis',filesep,'kmeans_foci',filesep];
 fociresfolder=[dirname,'foci_analysis',filesep,'cc_results',filesep];
+
+mkdir(kymofolder);
+mkdir(gc_fitfolder);
+mkdir(kmeansfolder);
 mkdir(fociresfolder);
 
 %% Lopps through all XY folders
@@ -108,13 +115,13 @@ for p= 1:num_xy
     end
     
     %Spot detection and Cell cycle analysis        
-    CCResults = fociAnalysis(dirname,stackname,Ncell,frame,limits,paramFit,timeStep);
+    fociAnalysis(stackname,kymofolder,gc_fitfolder,kmeansfolder,fociresfolder,Ncell,frame,limits,paramFit,timeStep);
 
     %Save results 
-    foci_name=[fociresfolder,'cc_res','_xy',num2str(num_xy),'_.mat']; 
-    save(foci_name,'CCResults');
+    %foci_name=[fociresfolder,'cc_res','_xy',num2str(num_xy),'_.mat']; 
+    %save(foci_name,'CCResults');
 
  
      
-end       
+end
 end
