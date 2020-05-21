@@ -19,7 +19,7 @@
 % Harvard University
 
 %%          (MODIFY THIS FILE AND SAVE IT IN DATA FOLDER)                %%
-
+function processExp()
 % Steps in the pipeline: 
 
 % 1. Preparing the files
@@ -285,7 +285,7 @@ delete(poolobj);
 t1=toc;
 disp(['Finished in ' num2str(round(10*t1/60)/10) ' minutes.']);
 cd(dirname);
-
+end
 %% Unused code (might be useful for some other things
 
 
