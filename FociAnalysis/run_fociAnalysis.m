@@ -1,4 +1,4 @@
-function run_fociAnalysis(dirname,paramFit)
+function run_fociAnalysis(dirname,paramFit,timeStep)
 
 %%%%% Encuentra el frame inicial y final por celula con la
     %%%%% mayor longitud in-interrumpida de frames. Genera la matrix
@@ -108,7 +108,7 @@ for p= 1:num_xy
     end
     
     %Spot detection and Cell cycle analysis        
-    CCResults = fociAnalysis(dirname,stackname,Ncell,frame,limits,paramFit);
+    CCResults = fociAnalysis(dirname,stackname,Ncell,frame,limits,paramFit,timeStep);
 
     %Save results 
     foci_name=[fociresfolder,'cc_res','_xy',num2str(num_xy),'_.mat']; 

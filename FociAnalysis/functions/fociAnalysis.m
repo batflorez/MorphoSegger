@@ -1,4 +1,4 @@
-function  CCResults = fociAnalysis(dirname,stackname,Ncell,frame,limits,paramFit)
+function  CCResults = fociAnalysis(dirname,stackname,Ncell,frame,limits,paramFit,timeStep)
 
 % this one comes from the old fun_anal4N
 % This parameter may be altered 55-85 - we need more info here
@@ -10,7 +10,7 @@ xy_pos = [erase(xy_pos,"."),'_'];
 
 kymofolder=[dirname,filesep,'foci_analysis',filesep,'kymographs',filesep]; 
 gc_fitfolder=[dirname,filesep,'foci_analysis',filesep,'gc_fits',filesep]; 
-kmeansfolder=[dirname,filesep,'foci_analysis',filesep,'kmeans',filesep];
+kmeansfolder=[dirname,filesep,'foci_analysis',filesep,'kmeans_foci',filesep];
 
 mkdir(kymofolder);
 mkdir(gc_fitfolder);
@@ -32,7 +32,9 @@ for N=1:Ncell
      foci4=zeros(1,size(tsStack,2)); 
      tb=zeros(1,length(foci));
      tc=zeros(1,length(foci));
-
+     a=[];
+     b=[];
+     
      start=limits(N,1);
      finish=limits(N,2);
 
@@ -178,6 +180,8 @@ for N=1:Ncell
                 a2=double(I(lin_ind2));
                 a3=double(I(lin_ind3));
                 a=a1+a2+a3;
+                
+                
                 aa=A(lin_ind);
                 b=sgolayfilt(a,4,11); 
 
@@ -230,7 +234,7 @@ for N=1:Ncell
     aux2=find(l_cell==0);
     l_cell(aux2)=NaN;         %Modify this
     
-    time=5*[0:1:length(l_cell)-1]; 
+    time=timeStep*(0:1:length(l_cell)-1); 
     [fit, gof, t_t]=createFit_exp(time, l_cell,paramFit);
 
     if t_t==1      
