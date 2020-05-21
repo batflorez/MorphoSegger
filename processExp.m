@@ -265,7 +265,7 @@ run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 
-paramFit=50;
+paramFit=50; % Consecutive points for a single cell to include the trajectory
 
 disp('Running Foci Analysis')
 run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep)

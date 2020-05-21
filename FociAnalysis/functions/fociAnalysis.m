@@ -5,7 +5,6 @@ function  CCResults = fociAnalysis(stackname,kymofolder,gc_fitfolder,kmeansfolde
 Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
 exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
 noiseTh=8;       % Noise threshold for wavelet detection
-cellThres=30;    % Consecutive points for a single cell to include the trajectory
 
 %%
 tsStack = tiffread(stackname);
@@ -39,7 +38,7 @@ for N=1:Ncell
      allCN = [frame(finish).object.cellID]; %finding ids per cell 
      ind = find(allCN == N);
 
-     if cont<cellThres  %consecutive points for a single cell to include the trajectory
+     if cont<paramFit  %consecutive points for a single cell to include the trajectory
           continue
      else  
          %%% Build up the mother trajectory for kymograph. It uses 
