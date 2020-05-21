@@ -265,10 +265,13 @@ run_parallel(dirname,params);
 
 %% 4. Foci calculation - Diego's pipeline
 
-paramFit=50; % Consecutive points for a single cell to include the trajectory
+paramFit=50;     % Consecutive points for a single cell to include the trajectory
+Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
+exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
+noiseTh=8;       % Noise threshold for wavelet detection
 
 disp('Running Foci Analysis')
-run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep)
+run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep,Dparameter,exp_cut,noiseTh)
 
 
 %% Shutting down parallel pool

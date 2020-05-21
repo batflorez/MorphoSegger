@@ -1,4 +1,4 @@
-function run_fociAnalysis(dirname,paramFit,timeStep)
+function run_fociAnalysis(dirname,paramFit,timeStep,Dparameter,exp_cut,noiseTh)
 
 %%%%% Encuentra el frame inicial y final por celula con la
     %%%%% mayor longitud in-interrumpida de frames. Genera la matrix
@@ -75,8 +75,6 @@ for p= 1:num_xy
     cont=zeros(Ncell, Nframe);
     limits=zeros(Ncell,2);
 
-    
-    %We maybe can use the table that generates morphometrics already
     for N=1:Ncell
         for fr=1:Nframe
             allCN = [frame(fr).object.cellID]; % comma separated list expansion 
@@ -88,12 +86,8 @@ for p= 1:num_xy
         end
     end  
 
-
     for j=1:Ncell
         
-         %maximo=Nframe; % what is this for?
-         %min=1;
-         
          temp=find(cont(j,:)==0);
          if isempty(temp)==1
              continue
@@ -115,13 +109,8 @@ for p= 1:num_xy
     end
     
     %Spot detection and Cell cycle analysis        
-    fociAnalysis(stackname,kymofolder,gc_fitfolder,kmeansfolder,fociresfolder,Ncell,frame,limits,paramFit,timeStep);
-
-    %Save results 
-    %foci_name=[fociresfolder,'cc_res','_xy',num2str(num_xy),'_.mat']; 
-    %save(foci_name,'CCResults');
-
- 
+    fociAnalysis(stackname,kymofolder,gc_fitfolder,kmeansfolder,fociresfolder,Ncell,frame,limits,paramFit,timeStep,Dparameter,exp_cut,noiseTh);
+   
      
 end
 end

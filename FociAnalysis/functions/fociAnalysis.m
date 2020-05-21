@@ -1,12 +1,7 @@
-function  CCResults = fociAnalysis(stackname,kymofolder,gc_fitfolder,kmeansfolder,fociresfolder,Ncell,frame,limits,paramFit,timeStep)
+function  CCResults =  fociAnalysis(stackname,kymofolder,gc_fitfolder,kmeansfolder,fociresfolder,Ncell,frame,limits,paramFit,timeStep,Dparameter,exp_cut,noiseTh)
+   
 
-%% Parameters:
-
-Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
-exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
-noiseTh=8;       % Noise threshold for wavelet detection
-
-%%
+%loading .tif stack and setting xy number
 tsStack = tiffread(stackname);
 xy_pos = char(regexp(stackname,'(_xy\w*).','match'));
 xy_pos = [erase(xy_pos,"."),'_'];
@@ -93,8 +88,8 @@ for N=1:Ncell
     yMax = yMin + stats.BoundingBox(4) - 1;
 
     % ends for for each frame each cell. 
-    %Foci counting
-    
+  
+      %Foci counting
         for k=start:finish           
                try
                     allCN = [frame(k).object.cellID]; % comma separated list expansion 
@@ -125,8 +120,6 @@ for N=1:Ncell
                 y_pole_up(k)=ys(1);
                 x_pole_bt(k)=xs(pole_2);        
                 y_pole_bt(k)=ys(pole_2);
-
-                %l_cell(k)=sqrt((xs(1)-xs(pole_2))^2+(ys(1)-ys(pole_2))^2);
         
                 l_cell(k)=frame(k).object(ind).length;                       
                 A=tsStack(k).data;                                   
@@ -136,7 +129,6 @@ for N=1:Ncell
                 I=A;
 
                 %%Generates binary per cell per frame
-
                 Im1=zeros(size(I));
 
                 for p=1:length(xs)
@@ -177,6 +169,8 @@ for N=1:Ncell
                 a=a1+a2+a3;
                 aa=A(lin_ind);
                 
+                %some cells are problematic, use this to prevent stopping
+                %the calculation
                  try
                     b=sgolayfilt(a,4,11); 
                  catch
@@ -197,7 +191,7 @@ for N=1:Ncell
                       catch
                            continue
                       end
-    % 
+  
                       if sum(abs(diff(bbb)))>Dparameter
                          counter=counter+1;    
                       end
@@ -230,7 +224,7 @@ for N=1:Ncell
 
 
     aux2=find(l_cell==0);
-    l_cell(aux2)=NaN;         %Modify this
+    l_cell(aux2)=NaN;         
     
     time=timeStep*(0:1:length(l_cell)-1); 
     [fit, gof, t_t]=createFit_exp(time, l_cell,paramFit,exp_cut);
@@ -266,11 +260,9 @@ for N=1:Ncell
     I_a=adapthisteq(mat2gray(kymo));
     imwrite(I_a,kymo_name);
 
-    %Save results 
-       
-
 end
 
+%Save results 
 foci_name=[fociresfolder,'cc_res',xy_pos,'.mat']; 
 save(foci_name,'CCResults');
 
