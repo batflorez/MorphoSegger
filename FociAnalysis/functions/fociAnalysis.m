@@ -33,12 +33,12 @@ for N=1:Ncell
      tb=zeros(1,length(foci));
      tc=zeros(1,length(foci));
 
-     inicio=limits(N,1);
-     fin=limits(N,2);
+     start=limits(N,1);
+     finish=limits(N,2);
 
-     cont=fin-inicio;
+     cont=finish-start;
 
-     allCN = [frame(fin).object.cellID]; %finding ids per cell 
+     allCN = [frame(finish).object.cellID]; %finding ids per cell 
      ind = find(allCN == N);
 
      if cont<30
@@ -50,13 +50,12 @@ for N=1:Ncell
          %%%start
 
          try
-            x_ztr=round(frame(fin).object(ind).centerline(:,2));
+            x_ztr=round(frame(finish).object(ind).centerline(:,2));
          catch
             warning('Problem');
             continue
          end
-
-         y_ztr=round(frame(fin).object(ind).centerline(:,1));
+         y_ztr=round(frame(finish).object(ind).centerline(:,1));
          l_k=round(length(x_ztr)/2);
          kymo=zeros(3*cont,length(x_ztr));
          temp=1;
@@ -70,18 +69,16 @@ for N=1:Ncell
 
 
     try
-        xs=round(frame(fin).object(ind).Xcont);
-        ys=round(frame(fin).object(ind).Ycont);
+        xs=round(frame(finish).object(ind).Xcont);
+        ys=round(frame(finish).object(ind).Ycont);
         label=num2str(N);
-        %Add label kymo, fit, etc
-
     catch
-            warning(label)
-            continue
+        warning(label)
+        continue
     end
 
 
-    AB=tsStack(inicio).data;
+    AB=tsStack(start).data;
     Im_s=zeros(size(AB));
 
     for p=1:length(xs)
@@ -101,7 +98,7 @@ for N=1:Ncell
     % ends for for each frame each cell. 
     %Foci counting
     
-        for k=inicio:fin           
+        for k=start:finish           
                try
                     allCN = [frame(k).object.cellID]; % comma separated list expansion 
                     ind = find(allCN == N);
@@ -119,7 +116,7 @@ for N=1:Ncell
                      warning(label)
                      continue
                end
-   
+               
               % pole calculations
                pole_2=frame(k).object(ind).pole2; 
 
@@ -185,7 +182,7 @@ for N=1:Ncell
                 b=sgolayfilt(a,4,11); 
 
                 [pks1,locs1]=findpeaks(b,'MinPeakDistance',5);
-                contar=0;
+                counter=0;
 
                 % DIEGO'S FOCI COUNTING: Since singal2noise is low, local
                 % variability of each peak was assessed by the derivate of the
@@ -200,30 +197,26 @@ for N=1:Ncell
                       end
     % 
                       if sum(abs(diff(bbb)))>Dparameter
-                         contar=contar+1;    
+                         counter=counter+1;    
                       end
                 end
 
-               foci(k)=contar;
+               foci(k)=counter;
                %%referencing to mother trajectory
-               mitad=round(length(b)/2);
+               halved=round(length(b)/2);
                r=1;
 
-               if l_k<mitad
+               if l_k<halved
                    continue
                end    
 
-               for q=l_k-mitad+1:1:l_k+mitad-1
-
+               for q=l_k-halved+1:1:l_k+halved-1
+                   
                     kymo(3*temp,q)=aa(r);
                     kymo(3*temp-1,q)=aa(r);
                     kymo(3*temp-2,q)=aa(r);
                     r=r+1;
-
                end
-
-               
-
                %%%% Wavelet counting
                AA(loc)=0;                                 
                AA=AA(yMin:yMax,xMin:xMax);
@@ -237,8 +230,8 @@ for N=1:Ncell
     aux2=find(l_cell==0);
     l_cell(aux2)=NaN;         %Modify this
     
-    tiempo=5*[0:1:length(l_cell)-1]; 
-    [fit, gof, t_t]=createFit_exp(tiempo, l_cell,paramFit);
+    time=5*[0:1:length(l_cell)-1]; 
+    [fit, gof, t_t]=createFit_exp(time, l_cell,paramFit);
 
     if t_t==1      
         continue                                
