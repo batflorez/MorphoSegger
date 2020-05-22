@@ -18,27 +18,31 @@
 % andrewflorez@gmail.com
 % Harvard University
 
-%%          (MODIFY THIS FILE AND SAVE IT IN DATA FOLDER)                %%
+%%          (MODIFY THIS FILE ACCORDING TO EXPERIMENT AND SAVE IT IN DATA FOLDER)                %%
 
+function processExp(preprocess, naming, supersegger,cleanup,imag2stack,morpho,fociCalc)
 % Steps in the pipeline: 
+%Boolean variables to decide which steps of the pipeline to run:
 
-% 1. Preparing the files
-% 2. Segmentation
-% 3. Morphometrics analysis
-% 4. Foci detection and Cell Cycle analysis
+% 1. Preparing files           - preprocess
+% 2. Convert file names        - naming
+% 3. SuperSegger Segmentation  - supersegger
+% 4. Clean up  files           - cleanup
+% 5. Convert images to stack   - imag2stack
+% 6. Morphometrics             - morpho
+% 7. Foci analysis             - fociCalc
 
-tic
 %% 1. Preparing tif files using MIJ (Fiji-Matlab interface)
 
+if preprocess                                             
+    
 % Select folder with ND2 files
-
-disp('Select Folder with ND2 files');
+disp('Select Folder with ND2 files:');
 dirname = uigetdir();
 dirname = fixDir(dirname);
 
-
 %The macro converts ND2 files to tif for two separate channels. It performs 
-%gaussian blur on the green channel
+%gaussian blur on the green channel if desired (check the macro code)
 
 macroFile1='ConvertND2toTif.txt';
 
@@ -53,7 +57,8 @@ t_end=89;
 args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
 runMacro([filepathMacro,macroFile1],args); 
 
-%% Converting to SuperSegger naming format
+end
+%% 2. Converting to SuperSegger naming format
 %
 % The previous script generates files in the following format:
 % 01xy - C=0_t0001.tif
@@ -67,8 +72,13 @@ runMacro([filepathMacro,macroFile1],args);
 % t00002xy001c1.tif
 % etc ... without basename
 
+if naming    
+    if isempty( dirname)
+        dirname= pwd;
+        dirname = fixDir(dirname);
+    end        
+
 dirname =  ([dirname,'Analysis',filesep]); %set analysis folder
-cd(dirname);
 %Set conversion parameters based on your file names:
 basename = '';
 timeFilterBefore ='_t';
@@ -80,7 +90,8 @@ channelNames = {'C=0','C=1'};
 convertImageNames(dirname, basename, timeFilterBefore, ...
     timeFilterAfter, xyFilterBefore,xyFilterAfter, channelNames )
 
-%% Setting the segmentations constants for your bacteria and micrscope resolution
+end
+%% 3. Setting segmentation constants and run SuperSegger
 %
 % Using correct resolution ensures correct pixel size and segmentation
 % constants if you do not know which constants to use you can run
@@ -93,6 +104,13 @@ convertImageNames(dirname, basename, timeFilterBefore, ...
 % To see the possible constants type :
 %[~, list] = getConstantsList;
 % list'
+
+if supersegger    
+    if isempty( dirname)
+        dirname= pwd;
+        dirname = fixDir(dirname);
+        dirname =  ([dirname,'Analysis',filesep]);
+    end        
 
 res = '60XBsS750fil2'; %These constants have been optimized for B.subtilis filaments
 
@@ -119,8 +137,9 @@ CONST = loadConstants(res,parallel_flag) ;
 % perform this registration)
 
 % Constants Calarco Microscope:
-CONST.imAlign.GFP     = [ 0.0000    0.0000    0.0000    0.0000];
-CONST.imAlign.mCherry = [0.04351    -0.0000    0.7200    0.5700]; 
+CONST.imAlign.Phase     = [ 0.0000    0.0000    0.0000    0.0000];
+CONST.imAlign.GFP       = [ 0.0000    0.0000    1.0000   1.0000];
+CONST.imAlign.mCherry   = [0.04351    -0.0000    0.7200    0.5700]; 
 % *last two values are X and Y shifts.
 
 % CONST.imAlign.DAPI    = [-0.0354   -0.0000    1.5500   -0.3900]; these
@@ -132,7 +151,7 @@ CONST.imAlign.mCherry = [0.04351    -0.0000    0.7200    0.5700];
 % % [out,~,~] = intAlignIm(im_shifted, im_base, 100 ); %The values in 'out' are the four values needed for the shifted channel.
 % 
 % Channel order for registration:
-CONST.imAlign.out = {CONST.imAlign.GFP,...     % c1 channel (this case is Phase or Bright field)
+CONST.imAlign.out = {CONST.imAlign.Phase,...     % c1 channel (this case is Phase or Bright field)
                     CONST.imAlign.GFP,...      % c2 channel name
                     CONST.imAlign.mCherry,...  % c3 channel name
                     CONST.imAlign.GFP};        % c4 channel name
@@ -192,7 +211,7 @@ skip = 1;  % segment every frame
 
 cleanflag = 1;
 
-%% 2. Running segmentation in SuperSegger
+%% Running segmentation in SuperSegger
 
 % Analysis steps in SuperSegger
 
@@ -213,29 +232,50 @@ cleanflag = 1;
 startEnd = [1 3];
 BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 
-%clearvars -except dirname filepathMacro
 
-%% Clean up files (raw_im *.tif,*.mat)
+end
+%% 4. Clean up files (raw_im *.tif, original, *.tif)
 
+if cleanup
+     if isempty( dirname)
+        dirname= pwd;
+        dirname = fixDir(dirname);
+        dirname =  ([dirname,'Analysis',filesep]);
+    end     
+    
 %Delete original and raw_im folders:
 disp('Deleting files...')
 rmdir( [dirname,filesep,'original',filesep],'s' ); 
 rmdir( [dirname,filesep,'raw_im',filesep],'s' );
 
+end
+%% 5. Converting images to stack 
 
-%% Converting images to stack 
-
-disp('Converting Images to Stack');
+if imag2stack   
+     if isempty( dirname)
+        dirname= pwd;
+        dirname = fixDir(dirname);
+        dirname =  ([dirname,'Analysis',filesep]);
+     end     
+    
+disp('Converting Images to Stack...');
 macroFile2='tifImagesToStack.txt';
 runMacro([filepathMacro,macroFile2],dirname);
-
-%% 3. Run Morphometrics for Pill Mesh calculation 
+end
+%% 6. Run Morphometrics for Pill Mesh calculation 
 
 % Morphometrics is a robust pipeline that interpolates cell contours at
 % subpixel resolution using PSICIC. It uses Oufti routines for segmentation
 % and ObjectJ routines for division detection. Here we will use
 % Morphometrics to quickly re-segment the binary masks, contour
 % fitting, mesh calculation together with basic lineage tracking.
+
+if morpho    
+     if isempty( dirname)
+        dirname= pwd;
+        dirname = fixDir(dirname);
+        dirname =  ([dirname,'Analysis',filesep]);
+    end     
 
 paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
 params = loadParams( paramName );
@@ -260,20 +300,30 @@ params = loadParams( paramName );
 % params.f_frame_diff = 4;    % Frame overlap
 % %workers = 6;                % Number of workers for parallel job
 % 
-disp('Running Morphometrics in parallel')
+disp('Running Morphometrics in parallel...')
 run_parallel(dirname,params);
 
-%% 4. Foci calculation - Diego's pipeline
+end
 
+%% 7. Foci calculation - Diego's pipeline
+
+if fociCalc
+     if isempty( dirname)
+        dirname= pwd;
+        dirname = fixDir(dirname);
+        dirname =  ([dirname,'Analysis',filesep]);
+     end
+     
+%Parameters    
 paramFit=50;     % Consecutive points for a single cell to include the trajectory
 Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
 exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
 noiseTh=8;       % Noise threshold for wavelet detection
 
-disp('Running Foci Analysis')
+disp('Running Foci Analysis...')
 run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep,Dparameter,exp_cut,noiseTh)
 
-
+end
 %% Shutting down parallel pool
 
 disp('Closing parallel pool...')
@@ -285,20 +335,4 @@ delete(poolobj);
 t1=toc;
 disp(['Finished in ' num2str(round(10*t1/60)/10) ' minutes.']);
 cd(dirname);
-
-%% Unused code (might be useful for some other things
-
-
-%disp ('Do you want to cleanup folders?, Y/N [Y]:')
-% try
-%     answer=input('','s');
-%     if lower(answer) ~='y'
-%         disp ('Exiting BatchSuperSegger. Reset clean flag and rerun');
-%         return
-%     end
-% catch
-%     % can not use input  - in eval mode
-% end
-
-%copyfile( [dirname,filesep,'xy1',filesep,'seg',filesep,'*.tif'], [dirname,filesep,'morphometrics'] )
-
+end
