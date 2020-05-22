@@ -12,7 +12,7 @@
 %                                                                         %
 % Process ND2 files, split channels, converts to tif, performs segmentation
 % with SuperSegger and analysis with Morphometrics v2. . The current
-% script was modified from SuperSegger. Copyright (C) 2016 Wiggins Lab.
+% script was modified from SuperSegger. Read full license
 
 % Andres Florez - 04/29/2020
 % andrewflorez@gmail.com
@@ -73,7 +73,7 @@ end
 % etc ... without basename
 
 if naming    
-    if isempty( dirname)
+    if ~exist( 'dirname','var')
         dirname= pwd;
         dirname = fixDir(dirname);
     end        
@@ -89,6 +89,9 @@ channelNames = {'C=0','C=1'};
 
 convertImageNames(dirname, basename, timeFilterBefore, ...
     timeFilterAfter, xyFilterBefore,xyFilterAfter, channelNames )
+
+res = '60XBsS750fil2'; %These constants have been optimized for B.subtilis filaments
+
 
 end
 %% 3. Setting segmentation constants and run SuperSegger
@@ -106,13 +109,11 @@ end
 % list'
 
 if supersegger    
-    if isempty( dirname)
+    if ~exist( 'dirname','var')
         dirname= pwd;
         dirname = fixDir(dirname);
         dirname =  ([dirname,'Analysis',filesep]);
     end        
-
-res = '60XBsS750fil2'; %These constants have been optimized for B.subtilis filaments
 
 %% Paralell Processing Mode
 
@@ -138,7 +139,7 @@ CONST = loadConstants(res,parallel_flag) ;
 
 % Constants Calarco Microscope:
 CONST.imAlign.Phase     = [ 0.0000    0.0000    0.0000    0.0000];
-CONST.imAlign.GFP       = [ 0.0000    0.0000    1.0000   1.0000];
+CONST.imAlign.GFP       = [ 0.0000    0.0000    0.0000   0.0000];
 CONST.imAlign.mCherry   = [0.04351    -0.0000    0.7200    0.5700]; 
 % *last two values are X and Y shifts.
 
@@ -151,7 +152,7 @@ CONST.imAlign.mCherry   = [0.04351    -0.0000    0.7200    0.5700];
 % % [out,~,~] = intAlignIm(im_shifted, im_base, 100 ); %The values in 'out' are the four values needed for the shifted channel.
 % 
 % Channel order for registration:
-CONST.imAlign.out = {CONST.imAlign.Phase,...     % c1 channel (this case is Phase or Bright field)
+CONST.imAlign.out = {CONST.imAlign.GFP,...     % c1 channel (this case is Phase or Bright field)
                     CONST.imAlign.GFP,...      % c2 channel name
                     CONST.imAlign.mCherry,...  % c3 channel name
                     CONST.imAlign.GFP};        % c4 channel name
@@ -237,7 +238,7 @@ end
 %% 4. Clean up files (raw_im *.tif, original, *.tif)
 
 if cleanup
-     if isempty( dirname)
+     if ~exist( 'dirname','var')
         dirname= pwd;
         dirname = fixDir(dirname);
         dirname =  ([dirname,'Analysis',filesep]);
@@ -252,7 +253,7 @@ end
 %% 5. Converting images to stack 
 
 if imag2stack   
-     if isempty( dirname)
+     if ~exist( 'dirname','var')
         dirname= pwd;
         dirname = fixDir(dirname);
         dirname =  ([dirname,'Analysis',filesep]);
@@ -271,7 +272,7 @@ end
 % fitting, mesh calculation together with basic lineage tracking.
 
 if morpho    
-     if isempty( dirname)
+     if ~exist( 'dirname','var')
         dirname= pwd;
         dirname = fixDir(dirname);
         dirname =  ([dirname,'Analysis',filesep]);
@@ -308,7 +309,7 @@ end
 %% 7. Foci calculation - Diego's pipeline
 
 if fociCalc
-     if isempty( dirname)
+     if ~exist( 'dirname','var')
         dirname= pwd;
         dirname = fixDir(dirname);
         dirname =  ([dirname,'Analysis',filesep]);
