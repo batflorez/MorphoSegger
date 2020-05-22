@@ -1,10 +1,10 @@
-%%%%%%%%%%%%% processExp Script - Pipeline for Imaging Analysis %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% - Pipeline for Imaging Analysis - %%%%%%%%%%%%%%%%%%%
 %                                                                         %
 %     @@@@@@@@@@@@@@@@@@          @   @        @@@@@@@@@@@@@@@@@@@@       %
 %         @@@@@@@@@@@@@@@@@       @@@@@       @@@@@@@@@@@@@@@@@           %
 %             @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@              %
 %               @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                %
-%                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                 %
+%                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                 %
 %                          @@@@@@@@@@@@@@@@@@@                            %
 %                               @@@@@@@@@                                 %
 %                                  @@@@                                   %
@@ -18,10 +18,10 @@
 % andrewflorez@gmail.com
 % Harvard University
 
-%%          (MODIFY THIS FILE ACCORDING TO EXPERIMENT AND SAVE IT IN DATA FOLDER)                %%
+%%  MODIFY PIPELINE ACCORDING TO EXPERIMENT SETTINGS AND SAVE IT IN EXPERIMENT FOLDER
 
 function processExp(preprocess, naming, supersegger,cleanup,imag2stack,morpho,fociCalc)
-% Steps in the pipeline: 
+% Steps of the pipeline: 
 %Boolean variables to decide which steps of the pipeline to run:
 
 % 1. Preparing files           - preprocess
