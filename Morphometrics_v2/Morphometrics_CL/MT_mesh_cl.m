@@ -93,8 +93,12 @@ for k=1:length(frame)
                         [d1,i1]=sort(D1);
                         
                         d1_sum=d1(1)+d1(2);
-                        cc1(p)=(kappa(i1(1))*d1(2)+kappa(i1(2))*d1(1))/d1_sum;
-                        
+                        %added by Andres Florez - 05/22/20
+                        try
+                            cc1(p)=(kappa(i1(1))*d1(2)+kappa(i1(2))*d1(1))/d1_sum;
+                        catch
+                            continue
+                        end
                         %second point
                         D2=sqrt((X-x2(p)).^2 + (Y-y2(p)).^2);
                         [d2,i2]=sort(D2);

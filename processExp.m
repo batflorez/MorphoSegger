@@ -307,6 +307,9 @@ if morpho
 
     disp('Running Morphometrics in parallel...')
     run_parallel(dirname,params);
+    
+    % if Morphometrics fails, clean up temporary files 
+    % cleanMorphometrics(dirname)
 
 end
 
