@@ -10,6 +10,7 @@ function run_parallel(dirname, params)
 
 %dirname=pwd;
 %dirname=fixDir(dirname);
+cleanMorphometrics(dirname); % delete temporary files before run
 contents = dir([dirname,'xy*']); %List all xy folders
 num_dir_tmp = numel(contents);
 nxy = [];
@@ -19,16 +20,18 @@ num_xy = 0;
 dirnamelist=cell(1,num_dir_tmp);
 for i = 1:num_dir_tmp
     if (contents(i).isdir) && (numel(contents(i).name) > 2)
-    num_xy = num_xy+1;
-    nxy = [nxy, str2double(contents(i).name(3:end))];
-    dirnamelist{i} = [dirname,contents(i).name,filesep,'seg'];
+        num_xy = num_xy+1;
+        nxy = [nxy, str2double(contents(i).name(3:end))];
+        dirnamelist{i} = [dirname,contents(i).name,filesep,'seg'];
     end
 end
 
 %List seg mask files and runs morphometrics in parallel
+
 parfor (k = 1:num_xy)
-    mask = dir([dirnamelist{k},filesep,'*.tif']);
-    maskFile_tmp= [mask.folder,filesep, mask.name];
+    dirname_xy = dirnamelist{k}; %added
+    mask = dir([dirname_xy,filesep,'mask1seg_xy*.tif']);
+    maskFile_tmp= [mask(1).folder,filesep, mask(1).name]; %important to select the mask file and prevent calling Gsegt etc.
     morphometrics_mask_cl(maskFile_tmp,params,[],1); 
 end
 
