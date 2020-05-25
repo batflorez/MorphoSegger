@@ -1,10 +1,10 @@
-%%%%%%%%%%%%% processExp Script - Pipeline for Imaging Analysis %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% - Pipeline for Imaging Analysis - %%%%%%%%%%%%%%%%%%%
 %                                                                         %
 %     @@@@@@@@@@@@@@@@@@          @   @        @@@@@@@@@@@@@@@@@@@@       %
 %         @@@@@@@@@@@@@@@@@       @@@@@       @@@@@@@@@@@@@@@@@           %
 %             @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@              %
 %               @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                %
-%                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                 %
+%                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                 %
 %                          @@@@@@@@@@@@@@@@@@@                            %
 %                               @@@@@@@@@                                 %
 %                                  @@@@                                   %
@@ -12,15 +12,11 @@
 %                                                                         %
 % Process ND2 files, split channels, converts to tif, performs segmentation
 % with SuperSegger and analysis with Morphometrics v2. . The current
-% script was modified from SuperSegger. Copyright (C) 2016 Wiggins Lab.
+% script was modified from SuperSegger. Read full license
 
 % Andres Florez - 04/29/2020
 % andrewflorez@gmail.com
 % Harvard University
-
-%%          (MODIFY THIS FILE AND SAVE IT IN DATA FOLDER)                %%
-function processExp()
-% Steps in the pipeline: 
 
 %%  MODIFY PIPELINE ACCORDING TO EXPERIMENT SETTINGS AND SAVE IT IN EXPERIMENT FOLDER
 
@@ -64,6 +60,33 @@ if preprocess
     runMacro([filepathMacro,macroFile1],args); 
 
 %% Converting to SuperSegger naming format
+=======
+if preprocess  
+    
+    % Select folder with ND2 files
+    disp('Select Folder with ND2 files:');
+    dirname = uigetdir();
+    dirname = fixDir(dirname);
+
+    %The macro converts ND2 files to tif for two separate channels. It performs 
+    %gaussian blur on the green channel if desired (check the macro code)
+
+    macroFile1='ConvertND2toTif.txt';
+
+    % Call MIJ for preprocessing:
+    filepathMacro = getMacroPath(); %Macro Files path
+
+    % Select frames to analyze
+    t_start=1;
+    t_end=89;
+
+    %calls MIJ to run the Fiji macro with arguments
+    args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
+    runMacro([filepathMacro,macroFile1],args); 
+
+end
+%% 2. Converting to SuperSegger naming format
+>>>>>>> diego/FociAnalysis
 %
 % The previous script generates files in the following format:
 % 01xy - C=0_t0001.tif
@@ -218,7 +241,7 @@ if supersegger
 
     cleanflag = 1;
 
-%% 2. Running segmentation in SuperSegger
+%% Running segmentation in SuperSegger
 
 % Analysis steps in SuperSegger
 
@@ -238,10 +261,6 @@ if supersegger
 
     startEnd = [1 3];
     BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
-
-%clearvars -except dirname filepathMacro
-
-%% Clean up files (raw_im *.tif,*.mat)
 
 
 end
@@ -347,6 +366,8 @@ delete(poolobj);
 t1=toc;
 disp(['Finished in ' num2str(round(10*t1/60)/10) ' minutes.']);
 
+load('handel') %alarm that the code is finished
+sound(y,Fs)
 end
 
 
