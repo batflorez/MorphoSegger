@@ -279,16 +279,17 @@ try
     kymo_name = [kymofolder,'kymograph',xy_pos,'cell_',label,'_','.tif'];
     I_a=adapthisteq(mat2gray(kymo));
     imwrite(I_a,kymo_name);
-
+    
+    %Save results 
+    foci_name=[fociresfolder,'cc_res',xy_pos,'.mat']; 
+    save(foci_name,'CCResults');
     
 catch        
-continue
+    continue
 end     
 end
 
-%Save results 
-foci_name=[fociresfolder,'cc_res',xy_pos,'.mat']; 
-save(foci_name,'CCResults');
+
 
 end
 
