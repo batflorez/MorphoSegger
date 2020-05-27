@@ -176,7 +176,11 @@ if supersegger
     CONST.superSeggerOpti.remove_microcolonies =false; %Default is 1. It prevents deleting clusters of cells.
     CONST.superSeggerOpti.remove_debris = 1; %Turn off it is deleting cells
     CONST.superSeggerOpti.MAX_WIDTH = 1e15; %Set this high to prevent filaments to be split 
+    CONST.superSeggerOpti.MAGIC_RADIUS = 7; % radius of contrast enhancement. deletes areas between cells 
     CONST.seg.OPTI_FLAG = false; %To avoid segmenting cells by shape
+    CONST.regionOpti.MIN_LENGTH = 0; % min length of cells
+    CONST.trackOpti.MIN_AREA=80; %filter small particles
+
 
     % this helps cleanup death cells, fragments etc..
     CONST.trackOpti.REMOVE_STRAY = true;

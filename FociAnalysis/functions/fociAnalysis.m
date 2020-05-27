@@ -116,12 +116,18 @@ for N=1:Ncell
                    pole_2=frame(k).object(ind).pole1;   
                end
 
+               try % added by Andres
                 x_pole_up(k)=xs(1);    
                 y_pole_up(k)=ys(1);
                 x_pole_bt(k)=xs(pole_2);        
                 y_pole_bt(k)=ys(pole_2);
-        
-                l_cell(k)=frame(k).object(ind).length;                       
+                l_cell(k)=frame(k).object(ind).length;      
+               catch
+                   continue
+               end
+  
+                
+                                
                 A=tsStack(k).data;                                   
                 AA=A;
                 AB=A;                                                                                                  
