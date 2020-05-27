@@ -7,6 +7,8 @@ xy_pos = char(regexp(stackname,'(_xy\w*).','match'));
 xy_pos = [erase(xy_pos,"."),'_'];
     
 for N=1:Ncell
+
+try    
              
      fit_data=zeros(1,size(tsStack,2));
      d_up=zeros(1,size(tsStack,2));
@@ -41,12 +43,12 @@ for N=1:Ncell
 
          %%%start
 
-         try
+%         try
             x_ztr=round(frame(finish).object(ind).centerline(:,2));
-         catch
-            warning('Problem');
-            continue
-         end
+%         catch
+%            warning('Problem');
+%            continue
+%         end
          y_ztr=round(frame(finish).object(ind).centerline(:,1));
          l_k=round(length(x_ztr)/2);
          kymo=zeros(3*cont,length(x_ztr));
@@ -60,14 +62,14 @@ for N=1:Ncell
         %%%start
 
 
-    try
+%    try
         xs=round(frame(finish).object(ind).Xcont);
         ys=round(frame(finish).object(ind).Ycont);
         label=num2str(N);
-    catch
-        warning(label)
-        continue
-    end
+%    catch
+%        warning(label)
+%        continue
+%    end
 
 
     AB=tsStack(start).data;
@@ -91,23 +93,28 @@ for N=1:Ncell
   
       %Foci counting
         for k=start:finish           
-               try
+        
+        try    
+            
+            
+            
+%               try
                     allCN = [frame(k).object.cellID]; % comma separated list expansion 
                     ind = find(allCN == N);
                     label=num2str(N);
-               catch
-                    warning(label)
-                    continue
-               end
+%               catch
+%                    warning(label)
+%                    continue
+%               end
 
-               try
+%               try
                     xs=round(frame(k).object(ind).Xcont);
                     ys=round(frame(k).object(ind).Ycont);
                     label=num2str(N);
-               catch
-                     warning(label)
-                     continue
-               end
+%               catch
+%                     warning(label)
+%                     continue
+%               end
                
               % pole calculations
                pole_2=frame(k).object(ind).pole2; 
@@ -116,15 +123,15 @@ for N=1:Ncell
                    pole_2=frame(k).object(ind).pole1;   
                end
 
-               try % added by Andres
+%               try % added by Andres
                 x_pole_up(k)=xs(1);    
                 y_pole_up(k)=ys(1);
                 x_pole_bt(k)=xs(pole_2);        
                 y_pole_bt(k)=ys(pole_2);
                 l_cell(k)=frame(k).object(ind).length;      
-               catch
-                   continue
-               end
+%               catch
+%                   continue
+%               end
   
                 
                                 
@@ -177,11 +184,11 @@ for N=1:Ncell
                 
                 %some cells are problematic, use this to prevent stopping
                 %the calculation
-                 try
+%                 try
                     b=sgolayfilt(a,4,11); 
-                 catch
-                    continue
-                 end
+%                 catch
+%                    continue
+%                 end
 
                 [pks1,locs1]=findpeaks(b,'MinPeakDistance',5);
                 counter=0;
@@ -195,7 +202,7 @@ for N=1:Ncell
                       try
                            bbb=(b(locs1(q)-3:locs1(q)+3));
                       catch
-                           continue
+                      continue
                       end
   
                       if sum(abs(diff(bbb)))>Dparameter
@@ -226,6 +233,13 @@ for N=1:Ncell
                foci3(k)=wavelet_foci(AA,AB,noiseTh);
                %%%% End wavelet 
                temp=temp+1;
+               
+        
+        catch        
+        continue
+        end       
+               
+               
         end
 
 
@@ -266,6 +280,10 @@ for N=1:Ncell
     I_a=adapthisteq(mat2gray(kymo));
     imwrite(I_a,kymo_name);
 
+    
+catch        
+continue
+end     
 end
 
 %Save results 
