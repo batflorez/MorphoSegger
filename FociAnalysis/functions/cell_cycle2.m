@@ -3,33 +3,23 @@ function [foci4,foci2,foci3_N,tb,tc] = cell_cycle2(foci,foci3_N)
 
 tc1=0;
 tb1=0;
-
 tc2=0;
 tb2=0;
-
 tc4=0;
 tb4=0;
-
 tc8=0;
 tb8=0;
-
 tc16=0;
 tb16=0;
-
 tc32=0;
 tb32=0;
 
 
 tb=zeros(1,length(foci));
 tc=zeros(1,length(foci));
-
 foci4=zeros(1,length(foci));
-
 foci2=foci3_N;
-
 foci3=foci2;
-
-
 aux_g=0;
 
 
@@ -428,13 +418,14 @@ cont=1;
                             if (foci_n(i+1)>=0.5) && (foci_n(i+1)<1.5)
                                      
                                 
-                                     if (foci_n(i-1)>=0.5) && (foci_n(i-1)<1.5)
-                                     
-                                         tb1=tb1-1;
-                                     
-                                         tc1=tc1+1;
-                                     
+                                     if (foci_n(i-1)>=0.5) && (foci_n(i-1)<1.5)                                  
+                                        
+                                            tb1=tb1-1;
+                                            tc1=tc1+1;
+                                         
                                      end
+                                     
+                            end
                                         
                                      
                             end  
