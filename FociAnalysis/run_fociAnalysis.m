@@ -76,15 +76,25 @@ for p= 1:num_xy
     limits=zeros(Ncell,2);
 
     for N=1:Ncell
+    try 
         for fr=1:Nframe
+        try
             allCN = [frame(fr).object.cellID]; % comma separated list expansion 
             ind = find(allCN == N);
             aux = isempty(ind);
             if aux==1
-                cont(N,fr)=-10;    
+                cont(N,fr)=-10;
             end
+        catch
+             continue
         end
-    end  
+        end
+    catch        
+        continue
+    end     
+        
+    end    
+        
 
     for j=1:Ncell
         
