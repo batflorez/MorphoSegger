@@ -1,7 +1,6 @@
 function [foci4,foci2,foci3_N,tb,tc] = cell_cycle(foci,foci3_N)
 
 
-
 tc1=0;
 tb1=0;
 
