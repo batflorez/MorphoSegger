@@ -79,7 +79,7 @@ for p= 1:num_xy
     try 
         for fr=1:Nframe
         try
-            allCN = [frame(fr).object.cellID]; % comma separated list expansion 
+            allCN = vertcat(frame(fr).object.cellID); % comma separated list expansion 
             ind = find(allCN == N);
             aux = isempty(ind);
             if aux==1

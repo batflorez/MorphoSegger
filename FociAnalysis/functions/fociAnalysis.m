@@ -32,7 +32,7 @@ try
      finish=limits(N,2);
      cont=finish-start;
 
-     allCN = [frame(finish).object.cellID]; %finding ids per cell 
+     allCN = vertcat(frame(finish).object.cellID); %finding ids per cell 
      ind = find(allCN == N);
 
      if cont<paramFit  %consecutive points for a single cell to include the trajectory
@@ -99,7 +99,7 @@ try
             
             
 %               try
-                    allCN = [frame(k).object.cellID]; % comma separated list expansion 
+                    allCN = vertcat(frame(k).object.cellID); % comma separated list expansion 
                     ind = find(allCN == N);
                     label=num2str(N);
 %               catch
