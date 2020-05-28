@@ -324,9 +324,9 @@ if fociCalc
      end
      
     %Parameters    
-    paramFit=50;     % Consecutive points for a single cell to include the trajectory
+    paramFit=50;     % number of time points to pick cells (consecutive growth)
     Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
-    exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
+    exp_cut=65;      % initial length of cell for exponential fit (pixels)
     noiseTh=8;       % Noise threshold for wavelet detection
 
     disp('Running Foci Analysis...')
