@@ -20,7 +20,7 @@
 
 %%  MODIFY PIPELINE ACCORDING TO EXPERIMENT SETTINGS AND SAVE IT IN EXPERIMENT FOLDER
 
-function processExp(preprocess,naming,supersegger,cleanup,imag2stack,morpho,fociCalc)
+function processExp(preprocess,naming,supersegger,cleanup,imag2stack)
 
 % Steps of the pipeline: 
 %Boolean variables to decide which steps of the pipeline to run:
@@ -271,73 +271,6 @@ if imag2stack
     runMacro([filepathMacro,macroFile2],dirname);
 
 end
-%% 6. Run Morphometrics for Pill Mesh calculation 
-
-% Morphometrics is a robust pipeline that interpolates cell contours at
-% subpixel resolution using PSICIC. It uses Oufti routines for segmentation
-% and ObjectJ routines for division detection. Here we will use
-% Morphometrics to quickly re-segment the binary masks, contour
-% fitting, mesh calculation together with basic lineage tracking.
-
-if morpho    
-     if ~exist( 'dirname','var')
-        dirname= pwd;
-        dirname = fixDir(dirname);
-        dirname =  ([dirname,'Analysis',filesep]);
-    end     
-
-    paramName ='Morphometrics_prefs_mask_CL'; %Select parameter file 
-    params = loadParams( paramName );
-    % 
-    %List of most frequently changed parameters, modify here for different
-    %types of images
-    params.v_imtype = 2;        % 1 = Phase; 2 = Fluorescence (internal); 3 = Fluorescence (peripheral)      
-    params.v_method = 3;        % 1 = Gradient Segmentation; 2 = Laplacian Segmentation; 
-                                % 3 = Adaptive Threshold Segmentation; 4 = Canny Segmentation
-    params.v_simplethres=1;     % Simple threshold 
-    params.f_areamin = 10;     % Min region size
-    params.f_areamax = 200000;  % Max region size
-    params.v_prox = 0;          % Cells are in proximity
-    params.v_exclude=0;         % Exclude edge objects
-    params.f_hmin_split=2;      % Cut distance (pxls)
-    params.v_save = 1;          % Save output
-    params.v_mt_mesh=1;         % Pill mesh
-    params.v_falsepos = 1;      % Reject false positives
-    params.f_int_rej = 3;       % False positive rejection parameter
-    % Tracking parameters:
-    params.f_pert_same = 0.55;  % Fractional overlap
-    params.f_frame_diff = 4;    % Frame overlap
-    %workers = 6;                % Number of workers for parallel job
-
-    disp('Running Morphometrics in parallel...')
-    run_parallel(dirname,params);
-
-end
-
-%% 7. Foci calculation - Diego's pipeline
-
-if fociCalc
-     if ~exist( 'dirname','var')
-        dirname= pwd;
-        dirname = fixDir(dirname);
-        dirname =  ([dirname,'Analysis',filesep]);
-     end
-     
-    %Parameters    
-    paramFit=50;     % number of time points to pick cells (consecutive growth)
-    Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
-    exp_cut=65;      % initial length of cell for exponential fit (pixels)
-    noiseTh=8;       % Noise threshold for wavelet detection
-
-    disp('Running Foci Analysis...')
-    run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep,Dparameter,exp_cut,noiseTh)
-
-end
-%% Shutting down parallel pool
-
-disp('Closing parallel pool...')
-poolobj = gcp('nocreate');
-delete(poolobj);
 
 %% THE END
 
