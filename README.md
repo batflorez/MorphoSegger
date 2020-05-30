@@ -7,7 +7,6 @@ MorphoSegger is a Matlab package for imaging analysis of bacterial cells that co
 ## Installation
 
 #### Requirements:
-
   
   * Curve fitting Toolbox  
   * Statistics and Machine Learning Toolbox  
@@ -22,6 +21,20 @@ MorphoSegger is a Matlab package for imaging analysis of bacterial cells that co
 The easiest way to install MIJ is via the repository. Click *Update > Manage update sites* on Fiji and check the repository [BIG-EPFL](https://sites.imagej.net/BIG-EPFL/). It might be useful to add the [ImageJ-Matlab](https://sites.imagej.net/MATLAB/) repository as well. Finally, add the path for Fiji scripts in Matlab: `addpath '/Applications/Fiji.app/scripts'`. Type `Miji` in Matlab to make sure it loads properly.
   
 #### Modifications to SuperSegger and Morphometrics:
+
+In order to create the pipeline that runs SuperSegger and Morphometrics, both tools were modified to create the linkage. In the process several bugs were fixed (specially for Morphometrics). Here are the list of modifications:
+
+#### Morphometrics:
+
+- It works now with Mac and Linux (all bugs have been fixed). To make it work for each distribution, unzip the MM_mexfiles for the appropriate OS and add them to the path. (Delete the other OS mexfiles from the path to prevent problems). In the MAC version, make sure to allow the mex files be opened on privacy settings.
+- simply_segment_cl.m had several bug fixes. The false pos function used for the command line version was the the falsepos.m file instead of the one written on simply_segment_cl.m
+- It saves automatically the cells_table_ID in the command line version, previously only in the GUI.
+- morphometrics_mask_cl script for binary masks. It can run in parallel (multiple cores) for different XY positions when using the run_parallel.m script. It requires parallel computing toolbox.
+- Several bugs have been fixed in view_contours function and scripts for command line processing (cl scripts).
+- v2struct function was added to easily access and change parameter values as a structure when running a pipeline.
+
+#### SuperSegger:
+
 
 
 

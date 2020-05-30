@@ -86,7 +86,7 @@ end
 
 % Delete cell directory since running 1-3 steps does not generate cell
 % files. Comment this if running full SuperSegger - Andres Florez 04/30/20
-rmdir( [dirname_cell,filesep]);
+%rmdir( [dirname_cell,filesep]);
 
 
 %% Link frames and do error resolution

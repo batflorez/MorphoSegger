@@ -237,7 +237,7 @@ if supersegger
     % in MorphoSegger, only Alignment, Segmentation and Stripping are used and
     % indicated in the variable startEnd.
 
-    startEnd = [1 3];
+    startEnd = [1 10];
     BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 
 
@@ -253,8 +253,8 @@ if cleanup
     
     %Delete original and raw_im folders:
     disp('Deleting files...')
-    rmdir( [dirname,filesep,'original',filesep],'s' ); 
-    rmdir( [dirname,filesep,'raw_im',filesep],'s' );
+    delete( [dirname,filesep,'original',filesep,'*.tif' ]);
+    delete( [dirname,filesep,'raw_im',filesep,'*.tif' ]);
 
 end
 %% 5. Converting images to stack 

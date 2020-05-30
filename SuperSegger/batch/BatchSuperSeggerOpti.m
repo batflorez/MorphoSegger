@@ -235,11 +235,11 @@ else
         end
     end
     
-    % shutting down parallel pool on the processExp script - Andres Florez
-%     if workers % shutting down parallel pool     
-%         poolobj = gcp('nocreate');
-%         delete(poolobj);
-%     end
+    
+    if workers % shutting down parallel pool     
+        poolobj = gcp('nocreate');
+        delete(poolobj);
+    end
     
     
     if ~workers
