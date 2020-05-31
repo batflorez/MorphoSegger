@@ -1,60 +1,97 @@
 ![alt text](https://github.com/batflorez/MorphoSegger_v1/blob/master/Morphometrics_v2/Morphometrics_GUI/morphometrics_v2_icon.JPG?raw=true) 
 
-# MorphoSegger v1.0
+# MorphoSegger 
 
-MorphoSegger is a Matlab package for imaging analysis of bacterial cells that combines two powerlful tools, [SuperSegger](https://github.com/wiggins-lab/SuperSegger/wiki) and [Morphometrics](https://simtk.org/projects/morphometrics). SuperSegger provides machine-learning based segmentation (with training GUI, foci and fluorescence analysus) and Morphometrics interpolates contours at subpixel resolution for robust cell size and morphology estimation. [Fiji](https://fiji.sc/) macros are integrated in Matlab through [MIJ](http://bigwww.epfl.ch/sage/soft/mij/) to expand the range of tools for pre-processing and analysis. This tool is most suited for analysis of bacteria in pads or CellAsic platforms. 
+MorphoSegger is a Matlab package for imaging analysis of bacterial cells that combines two powerlful tools, [SuperSegger](https://github.com/wiggins-lab/SuperSegger/wiki) and [Morphometrics](https://simtk.org/projects/morphometrics). SuperSegger provides machine-learning based segmentation (with training GUI, foci and fluorescence analysis) and Morphometrics that interpolates contours at subpixel resolution for robust cell size and morphology estimation. [Fiji](https://fiji.sc/) macros are integrated in Matlab through [MIJ](http://bigwww.epfl.ch/sage/soft/mij/) to expand the range of tools for pre-processing and analysis. This tool is most suited for analysis of bacteria in agar pads or [CellASIC ONIX](https://www.emdmillipore.com/US/en/life-science-research/cell-culture-systems/cellASIC-live-cell-analysis/microfluidic-plates/68eb.qB.wfkAAAFBWmVb3.sJ,nav#bacteria-cells) platforms. 
 
 ## Installation
 
 #### Requirements:
-  
+  #### Matlab:
   * Curve fitting Toolbox  
   * Statistics and Machine Learning Toolbox  
   * Global Optimization Toolbox  
   * Parallel Computing Toolbox  
+  #### Others:
   * Running installation of [Fiji](https://fiji.sc/) and [MIJ](http://bigwww.epfl.ch/sage/soft/mij/)  
-  * Adapted code of SuperSegger and Morphometrics (see below for a list of modifcations).  
-**Note:** set Matlab memory settings: *Preferences > General > Java Heap Memory* 
-
+  * Adapted code of SuperSegger and Morphometrics included in MorphoSegger package (see below for a list of modifcations).  
 
 #### Setting up MIJ:
-The easiest way to install MIJ is via the repository. Click *Update > Manage update sites* on Fiji and check the repository [BIG-EPFL](https://sites.imagej.net/BIG-EPFL/). It might be useful to add the [ImageJ-Matlab](https://sites.imagej.net/MATLAB/) repository as well. Finally, add the path for Fiji scripts in Matlab: `addpath '/Applications/Fiji.app/scripts'`. Type `Miji` in Matlab to make sure it loads properly.
+The easiest way to install MIJ is via the repository. Click *Update > Manage update sites* on Fiji and check the repository [BIG-EPFL](https://sites.imagej.net/BIG-EPFL/). It might be useful to add the [ImageJ-Matlab](https://sites.imagej.net/MATLAB/) repository as well. Finally, add the path for Fiji scripts in Matlab: `addpath '/Applications/Fiji.app/scripts'`. Type `Miji` in Matlab to make sure it loads properly.  
+
+**Note:** Set Matlab memory settings to accommodate your RAM: 
+*Preferences > General > Java Heap Memory* 
+
   
 #### Modifications to SuperSegger and Morphometrics:
 
-In order to create the pipeline that runs SuperSegger and Morphometrics, both tools were modified to create the linkage. In the process several bugs were fixed (specially for Morphometrics). Here are the list of modifications:
+To create the MorphoSegger pipeline, SuperSegger and Morphometrics went through several modifications. In this process several bugs were fixed (specially for Morphometrics). Here are the list of modifications:
 
 #### Morphometrics:
 
-- It works now with Mac and Linux (all bugs have been fixed). To make it work for each distribution, unzip the MM_mexfiles for the appropriate OS and add them to the path. (Delete the other OS mexfiles from the path to prevent problems). In the MAC version, make sure to allow the mex files be opened on privacy settings.
-- simply_segment_cl.m had several bug fixes. The false pos function used for the command line version was the the falsepos.m file instead of the one written on simply_segment_cl.m
-- It saves automatically the cells_table_ID in the command line version, previously only in the GUI.
-- morphometrics_mask_cl script for binary masks. It can run in parallel (multiple cores) for different XY positions when using the run_parallel.m script. It requires parallel computing toolbox.
-- Several bugs have been fixed in view_contours function and scripts for command line processing (cl scripts).
-- v2struct function was added to easily access and change parameter values as a structure when running a pipeline.
+- The C libraries were updated, now it works  with MAC and LINUX. To run it in specific distribution, unzip the MM_mexfiles for the appropriate OS and add them to the path (Remove other ones from path to prevent problems). In the MAC version, adjust privacy settings to prevent the system blocking the libraries.
+- Several bugs of command line scripts were fixed. The [simply_segment_cl.m](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_CL/simply_segment_cl.m) script works now to segment binary masks via simple threshold. The false_pos.m file was used instead of a more complicated version in simply_segment_cl.m
+- The option to save cells_table_ID was added in the command line version, previously only in the GUI.
+-  A script [morphometrics_mask_cl.m](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_CL/morphometrics_mask_cl.m) was created to run specifically in binary masks. The [run_parallel.m](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_CL/run_parallel.m) script was added to run Morphometrics using Parallel Computing toolbox from Matlab. It runs multiple XY positions in parallel (multiple cores in a laptop computer).
+- Several bugs were in the [view_contours](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_GUI/view_contours.m) function. The mesh and contours visualizations can now be saved as a .tif stack to inspect the quality of the analysis.
+- The parameter files in morphometrics can now be loaded as a structure and modified in the processExp pipeline file using the v2struct function (added to the package).
+- A script [cleanMorphometrics.m](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_CL/New_functions_CL/cleanMorphometrics.m) was added to delete temporary files *Gparent.tif and *Gsegt.tif to prevent errors when re-running Morphometrics. 
 
 #### SuperSegger:
 
+- [trackOptiStripSmall](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/frameLink/trackOptiStripSmall.m) was modified to save the binary mask after segmentation. It saves the info present in the *seg.mat files. 
+- [intCheckForInstallLib](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/Internal/intCheckForInstallLib.m) was updated to recognize the Deep Learning Toolbox (previously known as Neural Network Toolbox)
+- In [BatchSuperSeggerOpti](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/batch/BatchSuperSeggerOpti.m) the clean_flag user input prompt was commented since clean)flag is always used in MorphoSegger.
+- In [BatchSuperSeggerOpti](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/batch/BatchSuperSeggerOpti.m) the line closing the parallel job was commented so the parallel pool is still active when running Morphometrics.
+- A line was added in [trackOpti](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/frameLink/trackOpti.m) so the **cell** directory is no longer generated since is not being used.
+- The temporary images generated in SuperSegger are deleted in the pipeline script processExp to save space.
+  
+## Usage
 
+***Note:** check this youtube tutorial to get quickly started.*
 
-
-
-
-Download the tool:
+1. Check all requirements above, then download the tool:
 
 ```
 git clone https://github.com/batflorez/MorphoSegger.git
 ```
 
-## Usage
+2. Prepare a **processExp** pipeline script for an individual experiment adjusting the different variable settings. (The experiment consists of a folder with numbered .ND2 files for this version, but it can be easily modified).  
+   
+The most commonly modified variables are:
+  
+```
+    % Select frames to analyze
+    t_start=1;
+    t_end=60;
+```  
+Selects part of the time lapse that will be extracted from the ND2 files. This is useful to reduce processing time and prevent dealing with dead cells towards the end of the time lapse.
 
-Prepare a pipeline script for each experiment with the conditions and analysis options needed. Then run in Matlab command window:
+
+``` 
+    %Alignment constants
+    CONST.imAlign.Phase     = [ 0.0000    0.0000    0.0000    0.0000];
+    CONST.imAlign.GFP       = [ 0.0000    0.0000    0.0000    0.0000];
+    CONST.imAlign.mCherry   = [0.04351   -0.0000    0.7200    0.5700]; 
+    CONST.imAlign.DAPI      = [0.0000     0.0000    0.0000    0.0000]; 
+```
+If you have observed shifts between channels, SuperSegger allows you to correct it by setting the pixel shifts in X  and Y. Simply input those values in the last 2 columns of the matrix which are the X and Y pixel shifts respectively. A way to calculate those values is by manually shifting the image with the Channel Aligner tool from [MicrobeJ](https://www.microbej.com/) that runs in [Fiji](https://fiji.sc/). If you want to automatically calculate those values using fluorescent beads data, refer to the [intAlignIm](http://mtshasta.phys.washington.edu/website/superSegger/SuperSegger/Internal/intAlignIm.html) function in SuperSegger.
+
+```
+CONST.getLocusTracks.TimeStep = 5; 
+```
+Set this variable to the proper time interval. Important when running Foci Analysis.
+
+1. Then run in Matlab command window:
+   
 ```
 procesExp
 ```
+It takes around 70 min to run an experiment with 12 XY positions, phase and fluorescence, mid cell density, 60X and around 90 time points  in 6 cores.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 Please make sure to update tests as appropriate.
 
 ## License
+
