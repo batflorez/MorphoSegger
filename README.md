@@ -59,14 +59,15 @@ git clone https://github.com/batflorez/MorphoSegger.git
 2. Prepare a **processExp** pipeline script for an individual experiment adjusting the different variable settings. (The experiment consists of a folder with numbered .ND2 files for this version, but it can be easily modified).  
    
 The most commonly modified variables are:
+
+Selects part of the time lapse that will be extracted from the ND2 files. This is useful to reduce processing time and prevent dealing with dead cells towards the end of the time lapse.
   
 ```
     % Select frames to analyze
     t_start=1;
     t_end=60;
 ```  
-Selects part of the time lapse that will be extracted from the ND2 files. This is useful to reduce processing time and prevent dealing with dead cells towards the end of the time lapse.
-
+If you have observed shifts between channels, SuperSegger allows you to correct it by setting the pixel shifts in X  and Y. Simply input those values in the last 2 columns of the matrix which are the X and Y pixel shifts respectively. A way to calculate those values is by manually shifting the image with the Channel Aligner tool from [MicrobeJ](https://www.microbej.com/) that runs in [Fiji](https://fiji.sc/). If you want to automatically calculate those values using fluorescent beads data, refer to [intAlignIm](http://mtshasta.phys.washington.edu/website/superSegger/SuperSegger/Internal/intAlignIm.html) function in SuperSegger.
 
 ``` 
     %Alignment constants
@@ -75,14 +76,29 @@ Selects part of the time lapse that will be extracted from the ND2 files. This i
     CONST.imAlign.mCherry   = [0.04351   -0.0000    0.7200    0.5700]; 
     CONST.imAlign.DAPI      = [0.0000     0.0000    0.0000    0.0000]; 
 ```
-If you have observed shifts between channels, SuperSegger allows you to correct it by setting the pixel shifts in X  and Y. Simply input those values in the last 2 columns of the matrix which are the X and Y pixel shifts respectively. A way to calculate those values is by manually shifting the image with the Channel Aligner tool from [MicrobeJ](https://www.microbej.com/) that runs in [Fiji](https://fiji.sc/). If you want to automatically calculate those values using fluorescent beads data, refer to the [intAlignIm](http://mtshasta.phys.washington.edu/website/superSegger/SuperSegger/Internal/intAlignIm.html) function in SuperSegger.
+Advanced segmentation parameters in SuperSegger need to be modified for each experiment. An easy way to check if the paramters are appropriate for the dataset is to run the [trainingGui](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/trainingConstants/trainingGui.m) function, double-click in modify parameters, load a single tif image and click run. The slide bars will allow you to test different parameter values and observe segmentation quality.
+```
+CONST.superSeggerOpti.PEBBLE_CONST = 1.3;          %Default 1.5 for 60XEcM9
+CONST.superSeggerOpti.INTENSITY_DIF = 0.3;         %Default 0.15 for 60XEcM9
+CONST.superSeggerOpti.remove_microcolonies =false; %Default is 1. It prevents deleting clusters of cells. 
+CONST.superSeggerOpti.remove_debris = 1;           %Turn off it is deleting cells
+CONST.superSeggerOpti.MAX_WIDTH = 1e15;            %Set this high to prevent filaments to be split 
+CONST.superSeggerOpti.MAGIC_RADIUS = 7;            %radius of contrast enhancement. deletes areas between cells 
+CONST.seg.OPTI_FLAG = false;                       %To avoid segmenting cells by shape
+CONST.regionOpti.MIN_LENGTH = 8;                   % min length of cells
+CONST.trackOpti.MIN_AREA=80;                       %filter small particles
+```
 
+Set this variable to the proper time interval. Important when running Foci Analysis.
 ```
 CONST.getLocusTracks.TimeStep = 5; 
 ```
-Set this variable to the proper time interval. Important when running Foci Analysis.
+This parameter sets the minimum area of a cell in Morphometrics. It helps clean up segmentation errors occurred in SuperSegger. 
+```
+params.f_areamin = 80;
+```
 
-1. Then run in Matlab command window:
+3. Then run in Matlab command window:
    
 ```
 procesExp
