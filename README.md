@@ -98,12 +98,21 @@ This parameter sets the minimum area of a cell in Morphometrics. It helps clean 
 params.f_areamin = 80;
 ```
 
-3. Then run in Matlab command window:
+3. Once the settings are defined, the pipeline can be run by typing in Matlab:
    
 ```
-procesExp
+% 1. Preparing files           - preprocess
+% 2. Convert file names        - naming
+% 3. SuperSegger Segmentation  - supersegger
+% 4. Clean up  files           - cleanup
+% 5. Convert images to stack   - imag2stack
+% 6. Morphometrics             - morpho
+
+>>procesExp(1,1,1,1,1,1)
 ```
-It takes around 70 min to run an experiment with 12 XY positions, phase and fluorescence, mid cell density, 60X and around 90 time points  in 6 cores.
+The pipeline will run and process ND2 files, converting them to tif, renaming to SuperSegger format and finally segmentation and Morphometrics calculations on the output binary masks from SuperSegger. The pipeline is modular so different steps can run independently, just make sure to change the appropriate boolean input variables. 
+
+It takes around 70 min to run an experiment with 12 XY positions, phase and fluorescence, mid cell density, 60X and around 90 time points  in 6 cores. For more details about changing parameters of Morphometrics or SuperSegger please refer to their respective documentation.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
