@@ -11,7 +11,8 @@ Before running MorphoSegger, make sure to get familiar with SuperSegger, Morphom
 #### Requirements:
   #### Matlab:
   * Curve fitting Toolbox  
-  * Statistics and Machine Learning Toolbox  
+  * Statistics and Machine Learning Toolbox
+  * Deep Learning Toolbox  
   * Global Optimization Toolbox  
   * Parallel Computing Toolbox  
   #### Others:
