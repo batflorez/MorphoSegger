@@ -6,6 +6,7 @@ MorphoSegger is a Matlab package for imaging analysis of bacterial cells that co
 
 ## Installation
 
+Before running MorphoSegger, make sure to get familiar with SuperSegger, Morphometrics and Fiji macros.
 #### Requirements:
   #### Matlab:
   * Curve fitting Toolbox  
@@ -24,8 +25,6 @@ The easiest way to install MIJ is via the repository. Click *Update > Manage upd
 
   
 #### Modifications to SuperSegger and Morphometrics:
-
-To create the MorphoSegger pipeline, SuperSegger and Morphometrics went through several modifications. In this process several bugs were fixed (specially for Morphometrics). Here are the list of modifications:
 
 #### Morphometrics:
 
@@ -56,11 +55,11 @@ To create the MorphoSegger pipeline, SuperSegger and Morphometrics went through 
 git clone https://github.com/batflorez/MorphoSegger.git
 ```
 
-2. Prepare a **processExp** pipeline script for an individual experiment adjusting the different variable settings. (The experiment consists of a folder with numbered .ND2 files for this version, but it can be easily modified).  
+1. Prepare a **processExp** pipeline script for an individual experiment adjusting the different variable settings. The experiment consists of a folder with numbered .ND2 files for this version, but it can be easily modified. 
    
 The most commonly modified variables are:
 
-Selects part of the time lapse that will be extracted from the ND2 files. This is useful to reduce processing time and prevent dealing with dead cells towards the end of the time lapse.
+Selects part of the time lapse that will be extracted from the ND2 files. This is useful to reduce processing time and prevent dealing with dead cells towards the end of the time lapse:
   
 ```
     % Select frames to analyze
@@ -76,20 +75,20 @@ If you have observed shifts between channels, SuperSegger allows you to correct 
     CONST.imAlign.mCherry   = [0.04351   -0.0000    0.7200    0.5700]; 
     CONST.imAlign.DAPI      = [0.0000     0.0000    0.0000    0.0000]; 
 ```
-Advanced segmentation parameters in SuperSegger need to be modified for each experiment. An easy way to check if the paramters are appropriate for the dataset is to run the [trainingGui](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/trainingConstants/trainingGui.m) function, double-click in modify parameters, load a single tif image and click run. The slide bars will allow you to test different parameter values and observe segmentation quality.
+Advanced segmentation parameters in SuperSegger need to be modified for each experiment. An easy way to check if the paramters are appropriate for the dataset is to run the [trainingGui](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/trainingConstants/trainingGui.m) function, double-click in modify parameters, load a single tif image and click run. The slide bars will allow you to test different parameter values and observe segmentation quality, and the final values can be input in the processExp script:
 ```
-CONST.superSeggerOpti.PEBBLE_CONST = 1.3;          %Default 1.5 for 60XEcM9
-CONST.superSeggerOpti.INTENSITY_DIF = 0.3;         %Default 0.15 for 60XEcM9
-CONST.superSeggerOpti.remove_microcolonies =false; %Default is 1. It prevents deleting clusters of cells. 
-CONST.superSeggerOpti.remove_debris = 1;           %Turn off it is deleting cells
-CONST.superSeggerOpti.MAX_WIDTH = 1e15;            %Set this high to prevent filaments to be split 
-CONST.superSeggerOpti.MAGIC_RADIUS = 7;            %radius of contrast enhancement. deletes areas between cells 
-CONST.seg.OPTI_FLAG = false;                       %To avoid segmenting cells by shape
-CONST.regionOpti.MIN_LENGTH = 8;                   % min length of cells
-CONST.trackOpti.MIN_AREA=80;                       %filter small particles
+CONST.superSeggerOpti.PEBBLE_CONST = 1.3;          %Useful for removing debris
+CONST.superSeggerOpti.INTENSITY_DIF = 0.3;         %Useful for removing debris
+CONST.superSeggerOpti.remove_microcolonies =false; %Deletes clusters of cells. 
+CONST.superSeggerOpti.remove_debris = 1;           %Deletes debris and bubbles
+CONST.superSeggerOpti.MAX_WIDTH = 1e15;            %It sets cell length to split cells
+CONST.superSeggerOpti.MAGIC_RADIUS = 7;            %Contrast enhancement. Deletes areas between cells 
+CONST.seg.OPTI_FLAG = false;                       %Segments cells by shape
+CONST.regionOpti.MIN_LENGTH = 8;                   %Minimum length of cells
+CONST.trackOpti.MIN_AREA=80;                       %Threshold to filter small particles
 ```
 
-Set this variable to the proper time interval. Important when running Foci Analysis.
+Set this variable to the proper time interval. Important when running Foci Analysis:
 ```
 CONST.getLocusTracks.TimeStep = 5; 
 ```
@@ -98,7 +97,7 @@ This parameter sets the minimum area of a cell in Morphometrics. It helps clean 
 params.f_areamin = 80;
 ```
 
-3. Once the settings are defined, the pipeline can be run by typing in Matlab:
+1. Once the settings are defined, the pipeline can run in Matlab by typing:
    
 ```
 % 1. Preparing files           - preprocess
@@ -110,7 +109,7 @@ params.f_areamin = 80;
 
 >>procesExp(1,1,1,1,1,1)
 ```
-The pipeline will run and process ND2 files, converting them to tif, renaming to SuperSegger format and finally segmentation and Morphometrics calculations on the output binary masks from SuperSegger. The pipeline is modular so different steps can run independently, just make sure to change the appropriate boolean input variables. 
+The pipeline will run and process ND2 files, converting them to tif, renaming to SuperSegger format and finally performing segmentation and Morphometrics calculations on the output binary masks from SuperSegger. The pipeline is modular, so different steps can run independently, just make sure to change the appropriate boolean input variables. 
 
 It takes around 70 min to run an experiment with 12 XY positions, phase and fluorescence, mid cell density, 60X and around 90 time points  in 6 cores. For more details about changing parameters of Morphometrics or SuperSegger please refer to their respective documentation.
 
