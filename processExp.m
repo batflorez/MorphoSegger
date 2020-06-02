@@ -59,34 +59,8 @@ if preprocess
     args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
     runMacro([filepathMacro,macroFile1],args); 
 
-%% Converting to SuperSegger naming format
-=======
-if preprocess  
-    
-    % Select folder with ND2 files
-    disp('Select Folder with ND2 files:');
-    dirname = uigetdir();
-    dirname = fixDir(dirname);
-
-    %The macro converts ND2 files to tif for two separate channels. It performs 
-    %gaussian blur on the green channel if desired (check the macro code)
-
-    macroFile1='ConvertND2toTif.txt';
-
-    % Call MIJ for preprocessing:
-    filepathMacro = getMacroPath(); %Macro Files path
-
-    % Select frames to analyze
-    t_start=1;
-    t_end=89;
-
-    %calls MIJ to run the Fiji macro with arguments
-    args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
-    runMacro([filepathMacro,macroFile1],args); 
-
 end
 %% 2. Converting to SuperSegger naming format
->>>>>>> diego/FociAnalysis
 %
 % The previous script generates files in the following format:
 % 01xy - C=0_t0001.tif
@@ -169,7 +143,7 @@ if supersegger
 
     % Constants Calarco Microscope:
     CONST.imAlign.Phase     = [ 0.0000    0.0000    0.0000    0.0000];
-    CONST.imAlign.GFP       = [ 0.0000    0.0000    0.0000    0.0000];
+    CONST.imAlign.GFP       = [ 0.0000    0.0000    1.0000    1.0000];
     CONST.imAlign.mCherry   = [0.04351   -0.0000    0.7200    0.5700]; 
     CONST.imAlign.DAPI      = [0.0000     0.0000    0.0000    0.0000]; 
 
@@ -197,12 +171,16 @@ if supersegger
 %% Segmentation Filtering options in SuperSegger (modify if you see problems in detection)
 
     %The first two options (PEBBLE_CONST, INTENSITY_DIF) are for the remove_debris variable. 
-    CONST.superSeggerOpti.PEBBLE_CONST = 1.3; %Default 1.5 for 60XEcM9
-    CONST.superSeggerOpti.INTENSITY_DIF = 0.3; %Default 0.15 for 60XEcM9
-    CONST.superSeggerOpti.remove_microcolonies =false; %Default is 1. It prevents deleting clusters of cells.
-    CONST.superSeggerOpti.remove_debris = 1; %Turn off it is deleting cells
-    CONST.superSeggerOpti.MAX_WIDTH = 1e15; %Set this high to prevent filaments to be split 
-    CONST.seg.OPTI_FLAG = false; %To avoid segmenting cells by shape
+    CONST.superSeggerOpti.PEBBLE_CONST = 1.3;          %Useful for removing debris
+    CONST.superSeggerOpti.INTENSITY_DIF = 0.3;         %Useful for removing debris
+    CONST.superSeggerOpti.remove_microcolonies =false; %Deletes clusters of cells. 
+    CONST.superSeggerOpti.remove_debris = 1;           %Deletes debris and bubbles
+    CONST.superSeggerOpti.MAX_WIDTH = 1e15;            %It sets cell length to split cells
+    CONST.superSeggerOpti.MAGIC_RADIUS = 22;           %Contrast enhancement. Deletes areas between cells 
+    CONST.seg.OPTI_FLAG = false;                       %Segments cells by shape
+    CONST.regionOpti.MIN_LENGTH = 10;                  %Minimum length of cells
+    CONST.trackOpti.MIN_AREA=80;                       %Threshold to filter small particles
+
 
     % this helps cleanup death cells, fragments etc..
     CONST.trackOpti.REMOVE_STRAY = true;
@@ -317,7 +295,7 @@ if morpho
     params.v_method = 3;        % 1 = Gradient Segmentation; 2 = Laplacian Segmentation; 
                                 % 3 = Adaptive Threshold Segmentation; 4 = Canny Segmentation
     params.v_simplethres=1;     % Simple threshold 
-    params.f_areamin = 10;     % Min region size
+    params.f_areamin = 90;     % Min region size
     params.f_areamax = 200000;  % Max region size
     params.v_prox = 0;          % Cells are in proximity
     params.v_exclude=0;         % Exclude edge objects
@@ -333,7 +311,8 @@ if morpho
 
     disp('Running Morphometrics in parallel...')
     run_parallel(dirname,params);
-
+    %cleanMorphometrics(dirname)
+    
 end
 
 %% 7. Foci calculation - Diego's pipeline
@@ -346,9 +325,9 @@ if fociCalc
      end
      
     %Parameters    
-    paramFit=50;     % Consecutive points for a single cell to include the trajectory
+    paramFit=30;     % Consecutive points for a single cell to include the trajectory
     Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
-    exp_cut=65;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
+    exp_cut=20;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
     noiseTh=8;       % Noise threshold for wavelet detection
 
     disp('Running Foci Analysis...')
@@ -368,6 +347,7 @@ disp(['Finished in ' num2str(round(10*t1/60)/10) ' minutes.']);
 
 load('handel') %alarm that the code is finished
 sound(y,Fs)
+
 end
 
 
