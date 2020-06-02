@@ -20,7 +20,7 @@
 
 %%  MODIFY PIPELINE ACCORDING TO EXPERIMENT SETTINGS AND SAVE IT IN EXPERIMENT FOLDER
 
-function processExp(preprocess,naming,supersegger,cleanup,imag2stack,morpho)
+function processExp(preprocess,naming,supersegger,cleanup,imag2stack,morpho,fociCalc)
 
 % Steps of the pipeline: 
 %Boolean variables to decide which steps of the pipeline to run:
@@ -315,6 +315,25 @@ if morpho
     
 end
 
+%% 7. Foci calculation - Diego's pipeline
+
+if fociCalc
+     if ~exist( 'dirname','var')
+        dirname= pwd;
+        dirname = fixDir(dirname);
+        dirname =  ([dirname,'Analysis',filesep]);
+     end
+     
+    %Parameters    
+    paramFit=30;     % Consecutive points for a single cell to include the trajectory
+    Dparameter=65;   % Threshold to detect if it is foci in Diego's algorithm
+    exp_cut=20;      % Takes only 65 pixels onwards to fit the exponential. Those points are not included in the gc_fit plot but the fit itself starts on point 65
+    noiseTh=8;       % Noise threshold for wavelet detection
+
+    disp('Running Foci Analysis...')
+    run_fociAnalysis(dirname,paramFit,CONST.getLocusTracks.TimeStep,Dparameter,exp_cut,noiseTh)
+
+end
 %% Shutting down parallel pool
 
 disp('Closing parallel pool...')
@@ -330,5 +349,3 @@ load('handel') %alarm that the code is finished
 sound(y,Fs)
 
 end
-
-
