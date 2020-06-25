@@ -388,10 +388,10 @@ else
     framesPerMin = 1/CONST.getLocusTracks.TimeStep;
     [doubling_time_exp,growth_rate_exp, fitRMSE,rSquare] =ExpGrowthRateFit(cellLength, framesPerMin,CONST.getLocusTracks.PixelSize);
     
-    clist = gateTool( clist, 'add', growth_rate_exp, 'Growth Rate Exponential Fit' );
-    clist = gateTool( clist, 'add', doubling_time_exp, 'Doubling Time Exponential Fit' );
-    clist = gateTool( clist, 'add', fitRMSE, 'RMSE' );
-    clist = gateTool( clist, 'add', rSquare, 'R-square' );
+    clist = gateTool( clist, 'add', growth_rate_exp', 'Growth Rate Exponential Fit' );
+    clist = gateTool( clist, 'add', doubling_time_exp', 'Doubling Time Exponential Fit' );
+    clist = gateTool( clist, 'add', fitRMSE', 'RMSE' );
+    clist = gateTool( clist, 'add', rSquare', 'R-square' );
     
     clist.gate = CONST.trackLoci.gate;
     clist.neighbor = [];
@@ -560,9 +560,9 @@ for cellIdx = 1:length(cellLength)
     
     %Dealing with NaN
     idx = isnan(currLen);
-    currLen = cellLength(cellIdx,~idx).*PixelSize;
+    currLen = cellLength(cellIdx,~idx).*PixelSize; %convert data to um
     
-    if isempty(currLen) || length(currLen) < 5
+    if isempty(currLen) || length(currLen) < 5 %filter by trace length
         growthRates(cellIdx) = NaN;
         fitRMSE(cellIdx) = NaN;
         continue
