@@ -370,17 +370,27 @@ else
     % Add time, age and relative age to 3D clist.
     clist = gateTool( clist, 'add3Dt' );
     
-    % Add growth rate to 3D Clist.
+    % Add growth rate and doubling time to 3D Clist.
     len_0_ind = grabClistIndex(clist, 'Long axis (L) birth');
-    len_0 = clist.data(:,len_0_ind);
+    len_0 = clist.data(:,len_0_ind).*CONST.getLocusTracks.PixelSize; %converts length to um
     len_1_ind = grabClistIndex(clist, 'Long axis (L) death');
-    len_1 = clist.data(:,len_1_ind);
-    age_ind = grabClistIndex(clist, 'Cell age');
-    age = clist.data(:,age_ind);
-    growth_rate = (log(len_1) - log(len_0)) ./ age;
-    clist = gateTool( clist, 'add', growth_rate, 'Growth Rate' );
+    len_1 = clist.data(:,len_1_ind).*CONST.getLocusTracks.PixelSize;
     
-    % Add doubling time to 3D Clist.
+    age_ind = grabClistIndex(clist, 'Cell age');
+    age = clist.data(:,age_ind).* CONST.getLocusTracks.TimeStep;    %converting age to min for growth rate calculation
+    growth_rate = (log(len_1) - log(len_0)) ./ age;
+    doubling_time = log(2)./growth_rate;
+    clist = gateTool( clist, 'add', growth_rate, 'Growth Rate' );
+    clist = gateTool( clist, 'add', doubling_time, 'Doubling Time' );
+    
+    % growth rate, doubling time by fitting an exponential
+    [~,cellLength] = gateTool( clist, 'get', 2, '3d' );
+    framesPerMin = 1/CONST.getLocusTracks.TimeStep;
+    [doubling_time_exp,growth_rate_exp, fitRMSE] =ExpGrowthRateFit(cellLength, framesPerMin,CONST.getLocusTracks.PixelSize);
+    
+    clist = gateTool( clist, 'add', growth_rate_exp, 'Growth Rate Exponential Fit' );
+    clist = gateTool( clist, 'add', doubling_time_exp, 'Doubling Time Exponential Fit' );
+    clist = gateTool( clist, 'add', fitRMSE, 'Goodness of fit' );
     
     clist.gate = CONST.trackLoci.gate;
     clist.neighbor = [];
@@ -532,4 +542,61 @@ end
 
 function data = loaderInternal( filename )
 data = load(filename);
+end
+
+function [doublingTime,growthRates, fitRMSE] = ExpGrowthRateFit(cellLength, framesPerMin,PixelSize)
+% Compute the growth rate and doubling time from a Matrix with cell lengths
+% Each cell is a row
+
+
+if nargin < 2
+    framesPerMin = 1;
+end
+
+for cellIdx = 1:length(cellLength)  
+    
+    currLen = cellLength(cellIdx,:);
+    
+    %Dealing with NaN
+    idx = isnan(currLen);
+    currLen = cellLength(cellIdx,~idx).*PixelSize;
+    
+    if isempty(currLen) || length(currLen) < 5
+        growthRates(cellIdx) = NaN;
+        fitRMSE(cellIdx) = NaN;
+        continue
+    end
+
+    timePoints = 1:length(currLen);
+    timePoints = timePoints/framesPerMin;
+    
+    currLenLog=log(currLen);
+    currLenLog=currLenLog/currLenLog(1);
+
+    X=[ones(size(timePoints(:))) timePoints(:)];
+
+    B=((X'*X)^-1)*X'*currLenLog(:);
+
+    model='L0.*(exp(mu*t));';
+    fitType = fittype( model, 'indep', 't', 'depend', 'y' );
+    
+    L0start=currLen(1);
+    muStart=B(2);
+    
+    opts = fitoptions( fitType );
+    opts.Display = 'Off';
+    opts.MaxFunEvals = 1000;
+    opts.MaxIter = 800;
+    opts.TolFun = 1e-008;
+    opts.TolX = 1e-008;
+    opts.Weights = zeros(1,0);
+    opts.StartPoint = [L0start,muStart]; %Fitting Initial Guess
+    [Expfitresult, error] = fit(timePoints(:),currLen(:), fitType, opts);
+
+    growthRates(cellIdx) = Expfitresult.mu;
+    doublingTime(cellIdx) = log(2)./ Expfitresult.mu;
+    fitRMSE(cellIdx) = error.rmse;
+
+    
+end
 end
