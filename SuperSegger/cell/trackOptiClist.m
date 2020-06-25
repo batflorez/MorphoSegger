@@ -380,6 +380,8 @@ else
     growth_rate = (log(len_1) - log(len_0)) ./ age;
     clist = gateTool( clist, 'add', growth_rate, 'Growth Rate' );
     
+    % Add doubling time to 3D Clist.
+    
     clist.gate = CONST.trackLoci.gate;
     clist.neighbor = [];
     
