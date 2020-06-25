@@ -384,15 +384,15 @@ else
     clist = gateTool( clist, 'add', doubling_time, 'Doubling Time' );
     
     % growth rate, doubling time by fitting an exponential
-    [~,cellLength] = gateTool( clist, 'get', 2, '3d' );
-    framesPerMin = 1/CONST.getLocusTracks.TimeStep;
-    [doubling_time_exp,growth_rate_exp, fitRMSE,rSquare] =ExpGrowthRateFit(cellLength, framesPerMin,CONST.getLocusTracks.PixelSize);
-    
-    clist = gateTool( clist, 'add', growth_rate_exp', 'Growth Rate Exponential Fit' );
-    clist = gateTool( clist, 'add', doubling_time_exp', 'Doubling Time Exponential Fit' );
-    clist = gateTool( clist, 'add', fitRMSE', 'RMSE' );
-    clist = gateTool( clist, 'add', rSquare', 'R-square' );
-    
+%     [~,cellLength] = gateTool( clist, 'get', 2, '3d' );
+%     framesPerMin = 1/CONST.getLocusTracks.TimeStep;
+%     [doubling_time_exp,growth_rate_exp, fitRMSE,rSquare] =ExpGrowthRateFit(cellLength, framesPerMin,CONST.getLocusTracks.PixelSize);
+%     
+%     clist = gateTool( clist, 'add', growth_rate_exp', 'Growth Rate Exponential Fit' );
+%     clist = gateTool( clist, 'add', doubling_time_exp', 'Doubling Time Exponential Fit' );
+%     clist = gateTool( clist, 'add', fitRMSE', 'RMSE' );
+%     clist = gateTool( clist, 'add', rSquare', 'R-square' );
+     
     clist.gate = CONST.trackLoci.gate;
     clist.neighbor = [];
     
