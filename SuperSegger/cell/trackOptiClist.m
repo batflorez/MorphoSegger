@@ -386,11 +386,12 @@ else
     % growth rate, doubling time by fitting an exponential
     [~,cellLength] = gateTool( clist, 'get', 2, '3d' );
     framesPerMin = 1/CONST.getLocusTracks.TimeStep;
-    [doubling_time_exp,growth_rate_exp, fitRMSE] =ExpGrowthRateFit(cellLength, framesPerMin,CONST.getLocusTracks.PixelSize);
+    [doubling_time_exp,growth_rate_exp, fitRMSE,rSquare] =ExpGrowthRateFit(cellLength, framesPerMin,CONST.getLocusTracks.PixelSize);
     
     clist = gateTool( clist, 'add', growth_rate_exp, 'Growth Rate Exponential Fit' );
     clist = gateTool( clist, 'add', doubling_time_exp, 'Doubling Time Exponential Fit' );
-    clist = gateTool( clist, 'add', fitRMSE, 'Goodness of fit' );
+    clist = gateTool( clist, 'add', fitRMSE, 'RMSE' );
+    clist = gateTool( clist, 'add', rSquare, 'R-square' );
     
     clist.gate = CONST.trackLoci.gate;
     clist.neighbor = [];
@@ -544,7 +545,7 @@ function data = loaderInternal( filename )
 data = load(filename);
 end
 
-function [doublingTime,growthRates, fitRMSE] = ExpGrowthRateFit(cellLength, framesPerMin,PixelSize)
+function [doublingTime,growthRates, fitRMSE,rSquare] = ExpGrowthRateFit(cellLength, framesPerMin,PixelSize)
 % Compute the growth rate and doubling time from a Matrix with cell lengths
 % Each cell is a row
 
@@ -596,6 +597,7 @@ for cellIdx = 1:length(cellLength)
     growthRates(cellIdx) = Expfitresult.mu;
     doublingTime(cellIdx) = log(2)./ Expfitresult.mu;
     fitRMSE(cellIdx) = error.rmse;
+    rSquare(cellIdx) = error.rsquare;
 
     
 end
