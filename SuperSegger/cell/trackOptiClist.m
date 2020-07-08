@@ -381,7 +381,7 @@ else
     growth_rate = (log(len_1) - log(len_0)) ./ age;
     doubling_time = log(2)./growth_rate;
     clist = gateTool( clist, 'add', growth_rate, 'Growth Rate' );
-    clist = gateTool( clist, 'add', doubling_time, 'Doubling Time' );
+    clist = gateTool( clist, 'add', doubling_time, 'Doubling Time (min)' );
     
     % growth rate, doubling time by fitting an exponential
 %     [~,cellLength] = gateTool( clist, 'get', 2, '3d' );

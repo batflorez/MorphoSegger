@@ -1692,7 +1692,7 @@ end
 
 if isfield( clist, 'color' )
     cc = clist.color;
-    h = plot( x_plot,y, '.-', 'color', cc );
+    h = plot( x_plot,y, '.-', 'color', cc, 'LineWidth',2 );
 else
     h = plot( x_plot,y, '.-' );
     cc = h.Color;
@@ -1700,8 +1700,8 @@ end
 
 if data.error_flag
     hold on;
-    plot( x_plot,intFixError(y-dy), ':', 'color', cc );
-    plot( x_plot,intFixError(y+dy), ':', 'color', cc );
+    plot( x_plot,intFixError(y-dy), ':', 'color', cc,'LineWidth',2 );
+    plot( x_plot,intFixError(y+dy), ':', 'color', cc, 'LineWidth',2 );
 end
 
 
@@ -1850,16 +1850,16 @@ end
 
 if isfield( clist, 'color' )
     cc = clist.color;
-    h = plot( x_plot,yf, '-', 'color', cc );
+    h = plot( x_plot,yf, '-', 'color', cc,'LineWidth',2  );
 else
-    h = plot( x_plot,yf, '-' );
+    h = plot( x_plot,yf, '-','LineWidth',2  );
     cc = h.Color;
 end
 
 if data.error_flag
     hold on;
-    plot( x_plot,intFixError(yf-dyf), ':', 'color', cc );
-    plot( x_plot,intFixError(yf+dyf), ':', 'color', cc );
+    plot( x_plot,intFixError(yf-dyf), ':', 'color', cc,'LineWidth',2  );
+    plot( x_plot,intFixError(yf+dyf), ':', 'color', cc,'LineWidth',2  );
 end
 
 
