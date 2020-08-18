@@ -23,7 +23,7 @@ Before running MorphoSegger, make sure to get familiar with SuperSegger, Morphom
 The easiest way to install MIJ is via the repository. Click *Update > Manage update sites* on Fiji and check the repository [BIG-EPFL](https://sites.imagej.net/BIG-EPFL/). It might be useful to add the [ImageJ-Matlab](https://sites.imagej.net/MATLAB/) repository as well. Finally, add the path for Fiji scripts in Matlab: `addpath '/Applications/Fiji.app/scripts'`. Type `Miji` in Matlab to make sure it loads properly.  
 
 **Note:** Set Matlab memory settings to accommodate your RAM: 
-*Preferences > General > Java Heap Memory* 
+*Preferences > General > Java Heap Memory* and restart Matlab
 
   
 #### Modifications to SuperSegger and Morphometrics:
