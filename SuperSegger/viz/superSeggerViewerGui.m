@@ -500,6 +500,9 @@ else
     handles.image_directory.String = pwd;
 end
 set(handles.figure1, 'units', 'normalized', 'position', [0 0 1 1])
+txtHand = findall(handles.figure1, '-property', 'FontUnits'); 
+set(txtHand, 'FontUnits', 'normalized')
+
 initImage(hObject, handles);
 
 % Main menu
