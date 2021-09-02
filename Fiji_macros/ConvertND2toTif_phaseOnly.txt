@@ -37,17 +37,29 @@ for (i = 0; i < filenames.length; i++) {
 	if(endsWith(currFile, extension) && matches(filenames[i], pattern)) { // process matching regex, 
             count++;
         //Process Fluor channel    
-        run("Bio-Formats Importer", "open=currFile autoscale color_mode=Default rois_import=[ROI manager] specify_range view=Hyperstack stack_order=XYCZT t_begin=&timeStart t_end=&timeEnd t_step=1");
+            run("Bio-Formats", "open=currFile autoscale color_mode=Default open_all_series rois_import=[ROI manager] specify_range view=Hyperstack stack_order=XYCZT t_begin=&timeStart t_end=&timeEnd t_step=1");
         
-        //Process Phase channel
-        phase = getImageID();
-        selectImage(phase);
-        phaseName= getTitle();
-        titlePhase = replace(phaseName, extension, "xy");
-        rename(titlePhase);
-        run("Image Sequence... ", "format=TIFF name=["+titlePhase+timePrefix+"] save=&outDir");
-        close();
-        
+            //Process Phase channel
+            ids=newArray(nImages);
+                  for (k=0;k<nImages;k++) {   //this first for loop is necessary to get all images open
+                        selectImage(k+1);
+                        ids[k]=getImageID;
+                  }
+                        for (k=0;k<ids.length;k++) { // this second for loop is necessary to get the right number of images to iterate
+                              selectImage(ids[k]);
+                              title = getTitle();
+                              titlePhase = replace(title, " - ", " ");
+                              //Delete unnecessary names
+                              index1 = indexOf(titlePhase," ");
+                              index2 = lastIndexOf(titlePhase, ")");
+                              titlePhaseNew = substring(titlePhase, index1, index2);
+                              titlePhaseNew1 = replace(titlePhaseNew, ".nd2 \\(series", "_xy");
+                              titlePhaseNew2 = replace(titlePhaseNew1, " ", "");
+
+                              print(titlePhaseNew2);
+                              run("Image Sequence... " , "format=TIFF name=["+titlePhaseNew2+timePrefix+"] save=&outDir");
+                              close();
+                         }
         
 	}
 }
