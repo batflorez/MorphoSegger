@@ -1,0 +1,62 @@
+// This macro runs Bio-formats to convert ND2 files to tif and perform operations e.g: Gaussian blur
+// This macro prepares data for SuperSegger and Morphometrics analysis (MorphoSegger)
+// Author: Andres Florez     April 27, 2020, Harvard University
+
+args = split(getArgument(),";"); 
+
+//Select input, and create output directory
+//inDir = getDirectory("Choose input Directory");
+inDir = args[0]; //get input directory as an argument passed by Matlab
+outDir = inDir+"Analysis"+File.separator;
+if (File.exists(outDir))
+      exit("Directory already exists");
+else
+      File.makeDirectory(outDir);
+filenames = getFileList(inDir); 
+
+//Batch Mode
+setBatchMode(true);
+
+//Set parameters for image files
+timePrefix="_t";
+extension=".nd2";
+
+//Select the frames to analyze (define this in the processExp script)
+timeStart=args[1];
+timeEnd=args[2];
+
+pattern = ".*"; // for selecting all the files in the folder
+// different examples of regex-based selection 
+//pattern = "01-03.*Pos [3-9].*";
+//pattern = ".*Pos [7-9].*";
+//pattern = "01-02.*";
+
+count = 0;
+for (i = 0; i < filenames.length; i++) {
+	currFile = inDir+filenames[i];
+	if(endsWith(currFile, extension) && matches(filenames[i], pattern)) { // process matching regex, 
+            count++;
+        //Process Fluor channel    
+            run("Bio-Formats", "open=currFile autoscale color_mode=Default open_all_series rois_import=[ROI manager] specify_range view=Hyperstack stack_order=XYCZT t_begin=&timeStart t_end=&timeEnd t_step=1");
+        
+            //Process Phase channel
+            ids=newArray(nImages);
+                  for (k=0;k<nImages;k++) {   //this first for loop is necessary to get all images open
+                        selectImage(k+1);
+                        ids[k]=getImageID;
+                  }
+                        for (k=0;k<ids.length;k++) { // this second for loop is necessary to get the right number of images to iterate
+                              selectImage(ids[k]);
+                              phaseName= getTitle();
+                              titlePhase = replace(phaseName, extension, "xy");
+                              rename(titlePhase);
+                              run("Image Sequence... ", "format=TIFF name=["+titlePhase+timePrefix+"] save=&outDir");
+                              close();
+        
+                         }
+        
+	}
+}
+
+print("Number of files processed: "+count);
+
