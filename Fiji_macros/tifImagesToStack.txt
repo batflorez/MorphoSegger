@@ -21,14 +21,15 @@ for (n = 0; n < dirnames.length; n++) {    // lists all the directories under An
             //Array.print(currDir2);
             count1++;
             if (endsWith(list[k],"fluor1/")){
-                run("Image Sequence...", "open=currDir2 sort");
+                run("Image Sequence...", "open=["+ currDir2 +"] sort"); // Important to add ["+ currDir2 +"] to concatenate strings, otherwise it won't open the directory
                 name=getTitle();
                 saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif"); // save stack as .tif
                 close();
             }
-
+            
+            
             if (endsWith(list[k],"phase/")){
-                run("Image Sequence...", "open=currDir2 sort");  // save stack as .tif
+                run("Image Sequence...", "open=["+ currDir2 +"] sort");  // save stack as .tif
                 name=getTitle();
                 saveAs("Tiff", currDir2+name+"_xy"+(n)+".tif");
                 close();
