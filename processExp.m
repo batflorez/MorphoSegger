@@ -20,7 +20,7 @@
 
 %%  MODIFY PIPELINE ACCORDING TO EXPERIMENT SETTINGS AND SAVE IT IN EXPERIMENT FOLDER
 
-function processExp_glucose_042122(preprocess,naming,supersegger,cleanup,imag2stack,morpho,fociCalc)
+function processExp(preprocess,naming,supersegger,cleanup,imag2stack,morpho)
 
 % Steps of the pipeline: 
 %Boolean variables to decide which steps of the pipeline to run:
