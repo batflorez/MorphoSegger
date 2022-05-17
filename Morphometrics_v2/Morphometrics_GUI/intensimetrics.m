@@ -535,19 +535,19 @@ for i=1:Nframe
                 pill_area=polyarea(xpoly',ypoly')';
                 
                 %normalize integrated intensity
-                pill_int_norm=pill_int./pill_area;
+                pill_int=pill_int./pill_area; 
                 
                 %subtract background
                 if and(get(handles.checkbox_background,'Value'),get(handles.checkbox_subtract,'Value'))
-                    pill_int_norm=pill_int_norm-back_mean(i);
+                    pill_int=pill_int-back_mean(i);
                 end
                 
                 %set normalization type
-                %Storing variables problem was fixed. when normalized the
-                %variable is called pill_int_norm to prevent confusion.
+                %Storing variables problem was fixed. Storing pill_area
+                %only when normalizing
                 % Andres Florez - 05/17/21 
                 frame(i).object(j).channel(m).internal_norm='normalized';
-                frame(i).object(j).channel(m).internal_int_norm=pill_int_norm;
+                frame(i).object(j).channel(m).internal_int_norm=pill_int;
                 frame(i).object(j).channel(m).pill_mesh_area=pill_area;    
             else
                 frame(i).object(j).channel(m).internal_norm='unnormalized';
