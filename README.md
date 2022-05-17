@@ -15,6 +15,7 @@ Before running MorphoSegger, make sure to get familiar with SuperSegger, Morphom
   * Deep Learning Toolbox  
   * Global Optimization Toolbox  
   * Parallel Computing Toolbox  
+  * Mapping Toolbox (for intensimetrics function in Morphometrics)
   #### Others:
   * Running installation of [Fiji](https://fiji.sc/) and [MIJ](http://bigwww.epfl.ch/sage/soft/mij/)  
   * Adapted code of SuperSegger and Morphometrics included in MorphoSegger package (see below for a list of modifcations).  
@@ -37,6 +38,7 @@ The easiest way to install MIJ is via the repository. Click *Update > Manage upd
 - Several bugs were in the [view_contours](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_GUI/view_contours.m) function. The mesh and contours visualizations can now be saved as a .tif stack to inspect the quality of the analysis.
 - The parameter files in morphometrics can now be loaded as a structure and modified in the processExp pipeline file using the v2struct function (added to the package).
 - A script [cleanMorphometrics.m](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_CL/New_functions_CL/cleanMorphometrics.m) was added to delete temporary files *Gparent.tif and *Gsegt.tif to prevent errors when re-running Morphometrics. 
+- Several bugs were solved in the [intensimetrics.m](https://github.com/batflorez/MorphoSegger/blob/master/Morphometrics_v2/Morphometrics_GUI/intensimetrics.m) function. Calculating internal fluorescence now works without selecting for contour intensity. Pill mesh intensity can now be calculated without normalization.
 
 #### SuperSegger:
 
