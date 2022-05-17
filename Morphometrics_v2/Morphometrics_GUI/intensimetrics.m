@@ -502,7 +502,7 @@ for i=1:Nframe
                 mean1=mean1-back_mean(i);
             end
             
-            frame(i).object(j).channel(m).mean_int=mean1;
+            frame(i).object(j).channel(m).mean_int=mean1; %This is the internal mean intensity
             frame(i).object(j).channel(m).mean_int_area=area1;
         end
         
@@ -535,21 +535,28 @@ for i=1:Nframe
                 pill_area=polyarea(xpoly',ypoly')';
                 
                 %normalize integrated intensity
-                pill_int=pill_int./pill_area;
+                pill_int_norm=pill_int./pill_area;
                 
                 %subtract background
                 if and(get(handles.checkbox_background,'Value'),get(handles.checkbox_subtract,'Value'))
-                    pill_int=pill_int-back_mean(i);
+                    pill_int_norm=pill_int_norm-back_mean(i);
                 end
                 
                 %set normalization type
+                %Storing variables problem was fixed. when normalized the
+                %variable is called pill_int_norm to prevent confusion.
+                % Andres Florez - 05/17/21 
                 frame(i).object(j).channel(m).internal_norm='normalized';
+                frame(i).object(j).channel(m).internal_int_norm=pill_int_norm;
+                frame(i).object(j).channel(m).pill_mesh_area=pill_area;    
             else
                 frame(i).object(j).channel(m).internal_norm='unnormalized';
             end
-            
+            %if no normalization is done it won't save pill area since it
+            %is only calculated in the previous step - Andres Florez
+            %05/17/21
             frame(i).object(j).channel(m).internal_int=pill_int;
-            frame(i).object(j).channel(m).pill_mesh_area=pill_area;
+            
             %{
             %test figure
             figure;
@@ -587,7 +594,7 @@ for i=1:Nframe
                 xlabel('Centerline Point')
                 xlim([1 length(pill_int)])
                 title(['Centerline intensity profile for object ' num2str(j)])
-            else
+            elseif and(contq,pillq) % Added this condition to fix the plotting - Andres Florez 05/17/21
                 hold off
                 plot(prof,'b','Linewidth',2)
                 hold on

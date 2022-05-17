@@ -18,6 +18,7 @@ sub_mat=im_mat(y_d:y_u,x_l:x_r);
 Xnew=X-(x_l-1);
 Ynew=Y-(y_d-1);
 
+
 %{
 figure;
 hold on
@@ -33,8 +34,9 @@ for i=1:size(sub_mat,1)
     for j=1:size(sub_mat,2)
         xpxl=[j-1/2,j-1/2,j+1/2,j+1/2];
         
+        
         %get pixel coords
-        [x_int,y_int]=polybool('intersection',Xnew,Ynew,xpxl,ypxl);
+        [x_int,y_int]=polybool('intersection',Xnew,Ynew,xpxl,ypxl); %Added the functions - Andres Florez 05/17/22
         %[x_int,y_int]=polybool_tsu(Xnew,Ynew,xpxl,ypxl);
 
         if ~isempty(x_int)
