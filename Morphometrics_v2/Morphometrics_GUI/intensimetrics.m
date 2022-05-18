@@ -551,11 +551,12 @@ for i=1:Nframe
                 frame(i).object(j).channel(m).pill_mesh_area=pill_area;    
             else
                 frame(i).object(j).channel(m).internal_norm='unnormalized';
+                frame(i).object(j).channel(m).internal_int=pill_int;
             end
             %if no normalization is done it won't save pill area since it
             %is only calculated in the previous step - Andres Florez
             %05/17/21
-            frame(i).object(j).channel(m).internal_int=pill_int;
+            %frame(i).object(j).channel(m).internal_int=pill_int;
             
             %{
             %test figure
