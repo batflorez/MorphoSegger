@@ -49,10 +49,10 @@ The easiest way to install MIJ is via the repository. Click *Update > Manage upd
 - A line was added in [trackOpti](https://github.com/batflorez/MorphoSegger/blob/master/SuperSegger/frameLink/trackOpti.m) so the **cell** directory is no longer generated since is not being used.
 - The temporary images generated in SuperSegger are deleted in the pipeline script processExp to save space.
   
-## Usage
+## Instructions
 
-***Note:** Check these YouTube tutorials to get quickly started on how to use MorphoSegger.*
-*  [How to use MorphoSegger](https://youtu.be/M7vxD7lyv-Y) (with an example)
+**Note:** Check these YouTube tutorials to get quickly started.*
+*  [How to use MorphoSegger](https://youtu.be/M7vxD7lyv-Y) (with examples)
 
 
 1. Check all requirements above, then download the tool:
@@ -61,7 +61,7 @@ The easiest way to install MIJ is via the repository. Click *Update > Manage upd
 git clone https://github.com/batflorez/MorphoSegger.git
 ```
 
-1. Prepare a **processExp** pipeline script for an individual experiment adjusting the different variable settings. The experiment consists of a folder with numbered .ND2 files for this version, but it can be easily modified. 
+2. Prepare a **processExp** pipeline script for an individual experiment adjusting the different variable settings. The experiment consists of a folder with numbered .ND2 files for this version, but it can be easily modified. 
    
 The most commonly modified variables are:
 
@@ -103,7 +103,7 @@ This parameter sets the minimum area of a cell in Morphometrics. It helps clean 
 params.f_areamin = 80;
 ```
 
-1. Once the settings are defined, the pipeline can run in Matlab by typing:
+3. Once the settings are defined, the pipeline can run in Matlab by typing:
    
 ```
 % 1. Preparing files           - preprocess
