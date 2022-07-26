@@ -74,15 +74,20 @@ end
 
 %% trackOptiStripSmall
 % removes small regions that are probably not real (bubbles, dust, or minicells)
-% stamp_name = [dirname_seg,'.trackOptiStripSmall-Step1.mat'];
-% if ~exist( stamp_name, 'file' ) && (startEnd(1) <= 3 && startEnd(2) >= 3)
-%     disp([header,'trackOpti - Step 1: Running trackOptiStripSmall.']);
-%     trackOptiStripSmall(dirname_seg, CONST);
-%     time_stamp = clock;
-%     save( stamp_name, 'time_stamp');
-% else
-%     disp([header, 'trackOpti: trackOptiStripSmall already run.'] );
-% end
+stamp_name = [dirname_seg,'.trackOptiStripSmall-Step1.mat'];
+if ~exist( stamp_name, 'file' ) && (startEnd(1) <= 3 && startEnd(2) >= 3)
+    disp([header,'trackOpti - Step 1: Running trackOptiStripSmall.']);
+    trackOptiStripSmall(dirname_seg, CONST);
+    time_stamp = clock;
+    save( stamp_name, 'time_stamp');
+else
+    disp([header, 'trackOpti: trackOptiStripSmall already run.'] );
+end
+
+% Delete cell directory since running 1-3 steps does not generate cell
+% files. Comment this if running full SuperSegger - Andres Florez 04/30/20
+rmdir( [dirname_cell,filesep]);
+
 
 %% Link frames and do error resolution
 % Calculate the overlap between cells between subsequent frames.
@@ -183,8 +188,7 @@ stamp_name = [dirname_seg,'.trackOptiClist-Step7.mat'];
 if ~exist( stamp_name, 'file' ) && (startEnd(1) <= 9 && startEnd(2) >= 9)
     disp([header,'trackOpti - Step 7: Running trackOptiClist.']);  
     
-    %[clist] = trackOptiClist(dirname_seg, CONST, header);
-    [clist] = trackOptiClist_fluor123(dirname_seg, CONST, header); %clist with more fluor info
+    [clist] = trackOptiClist(dirname_seg, CONST, header);
     
     if isfield( CONST, 'gate' )
         clist.gate = CONST.gate;

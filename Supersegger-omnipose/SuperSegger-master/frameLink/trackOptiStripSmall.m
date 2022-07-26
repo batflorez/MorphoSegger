@@ -47,7 +47,7 @@ else
 end
 SE = strel('disk',3);
 
-for i = 1:num_im;
+for i = 1:num_im
     
     if CONST.parallel.show_status
         waitbar((num_im-i)/num_im,h,['Strip small cells--Frame: ',num2str(i),'/',num2str(num_im)]);
@@ -92,7 +92,7 @@ for i = 1:num_im;
     % filling the holes in each region separetely
     ss = size( data_c.phase );
     regs_label = bwlabel( cellmask_nosmall );
-    props = regionprops( regs_label, {'Area','BoundingBox'} );
+    props = regionprops( regs_label, {'Area','BoundingBox'} );%I can add more fields as Morphometrics does
     num_props = numel(props);
     mask_new = false(ss);
     
@@ -112,14 +112,31 @@ for i = 1:num_im;
         pause;
     end
     
+    
     data_c.mask_cell = mask_new;
     
-    % remake the regions
+     % remake the regions
     data_c = intMakeRegs( data_c, CONST);
     
     % save the updated *seg.mat file
-    dataname=[dirname,contents(i).name];
+    dataname=[dirname,contents(i).name]; 
     save(dataname,'-STRUCT','data_c');
+    
+    %It saves the mask here for further Mesh calculation and tracking in
+    %Morphometrics:    - added by Andres Florez on 04/16/2020
+   
+    %mask_name = char(regexp(contents(1).name,['(\w*)t'],'tokens','once')); %change this if you change the file names
+    mask_name1 = char(regexp(contents(1).name,'(xy\w*)_','match'));
+    mask_name2 = erase(mask_name1,"_");
+    dataname_mask=[dirname,'mask1seg_', mask_name2, '.tif']; 
+    disp('BatchSuperSeggerOpti : Saving binary mask1 as .tif');
+    imwrite(data_c.mask_cell,dataname_mask,'Compression','none','WriteMode','append');
+    
+    %Delete *_seg.mat files to save space - added by Andres Florez 04/30/20
+    %comment this line if using Full SuperSegger
+    %disp('Deleting *_seg.mat files');
+    %delete( [dirname,filesep,'*_seg.mat'] );
+    
     
     
 end
@@ -128,7 +145,10 @@ if CONST.parallel.show_status
     close(h);
 end
 
+
 end
+
+
 
 
 function data = loaderInternal( filename )
