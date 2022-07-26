@@ -233,11 +233,12 @@ if supersegger
 % 9 : clist
 % 10 : cell files
 
-    % in MorphoSegger, only Alignment, Segmentation and Stripping are used and
+    % in MorphoSegger, only Registration, Segmentation and Stripping are used and
     % indicated in the variable startEnd.
 
     startEnd = [1 3];
-    BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
+    autoomni = 1; %run Omnipose automatically with MATLAB
+    BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd, autoomni);
 
 
 end
