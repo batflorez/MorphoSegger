@@ -6,11 +6,14 @@
 function sum1 = get_pillmesh_profile(X,Y,im_mat)
 
 %get bounding box of polygon
-x_l=floor(min(X));
-x_r=ceil(max(X));
+s = size(im_mat);
 
-y_d=floor(min(Y));
-y_u=ceil(max(Y));
+x_l=max(floor(min(X)), 1);
+x_r=min(ceil(max(X)), s(2));
+
+y_d=max(floor(min(Y)), 1);
+y_u=min(ceil(max(Y)), s(1));
+
 
 sub_mat=im_mat(y_d:y_u,x_l:x_r);
 
