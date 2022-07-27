@@ -143,7 +143,6 @@ if exist( dirname_, 'dir' )
         if CONST.align.ALIGN_FLAG
             crop_box_array = trackOptiAlignPad( dirname_,...
                 CONST.parallel.parallel_pool_num, CONST);
-           %movefile( [dirname_,filesep,'*.tif*'], [dirname_,filesep,'raw_im'] ) % moves images to raw_im
             %movefile( [dirname_,filesep,'*.tif*'], [dirname_,filesep,'raw_im'] ) % moves images to raw_im
             %movefile( [dirname_,'align',filesep,'*.tif*'], [dirname_,filesep]); % moves aligned back to main folder
            system('find . -name "*.tif" -maxdepth 1 -exec mv {} raw_im/ \;');% moves images to raw_im (for lots of images)
