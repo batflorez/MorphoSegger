@@ -33,6 +33,7 @@ function BatchSuperSeggerOpti(dirname_,skip,clean_flag,res,startEnd,showWarnings
 % startEnd : array of two values to indicate where to start and where to
 % stop the program. 1, alignment, 2, segmentation, 3, stripping, 4 linking,
 % 5, cell marker, 6 : fluor, 7 : foci, 8, cellA structrues, 9, clist, 10 cell files.
+% autoomni : run Omnipose automatically with MATLAB
 %
 % Copyright (C) 2016 Wiggins Lab
 % Written by Paul Wiggins & Stella Stylianidou.
@@ -143,6 +144,7 @@ if exist( dirname_, 'dir' )
             crop_box_array = trackOptiAlignPad( dirname_,...
                 CONST.parallel.parallel_pool_num, CONST);
            %movefile( [dirname_,filesep,'*.tif*'], [dirname_,filesep,'raw_im'] ) % moves images to raw_im
+            %movefile( [dirname_,filesep,'*.tif*'], [dirname_,filesep,'raw_im'] ) % moves images to raw_im
             %movefile( [dirname_,'align',filesep,'*.tif*'], [dirname_,filesep]); % moves aligned back to main folder
            system('find . -name "*.tif" -maxdepth 1 -exec mv {} raw_im/ \;');% moves images to raw_im (for lots of images)
            system('find align/ -name "*.tif" -maxdepth 1 -exec mv {} . \;'); % moves aligned back to main folder (for lots of images)
@@ -182,6 +184,7 @@ else
         if (contents(i).isdir) && (numel(contents(i).name) > 2)
             num_xy = num_xy+1;
             nxy = [nxy, str2double(contents(i).name(3:end))];
+            %nxy = [nxy, str2num(contents(i).name(3:end))];
             dirname_list{i} = [dirname_,contents(i).name,filesep];
         end
     end
@@ -196,6 +199,7 @@ else
         if (contents(i).isdir) && (numel(contents(i).name) > numel('fluor'))
             num_c = num_c+1;
             nc = [nc, str2double(contents(i).name(numel('fluor')+1:end))+1]; %see if this works
+            %nc = [nc, str2num(contents(i).name(numel('fluor')+1:end))+1];
         end
     end
     
@@ -217,7 +221,7 @@ else
     end
     
     parfor(j = 1:num_xy,workers)
-        %for j = 1:num_xy
+    %for j = 1:num_xy
         
         dirname_xy = dirname_list{j};
         intProcessXY( dirname_xy, skip, nc, num_c, clean_flag, ...
@@ -236,7 +240,7 @@ else
     end
     
     % shutting down parallel pool on the processExp script - Andres Florez
-%     if workers % shutting down parallel pool     
+%     if workers % shutting down parallel pool
 %         poolobj = gcp('nocreate');
 %         delete(poolobj);
 %     end
@@ -252,7 +256,7 @@ end
 end
 
 function intProcessXY( dirname_xy, skip, nc, num_c, clean_flag, ...
-    CONST, startEnd, crop_box,autoomni)
+    CONST, startEnd, crop_box, autoomni)
 % intProcessXY : the details of running the code in parallel.
 % Essentially for parallel processing to work, you have to hand each
 % processor all the information it needs to process the images.
@@ -316,11 +320,82 @@ if clean_flag
     cleanSuperSegger (dirname_xy, startEnd, skip)
 end
 
+%check if omnipose installed to matlab and want to run automatically
+opinstalled = 0;
+if (isunix || ismac) && autoomni
+	opinstalled = ~system('source activate omnipose');
+elseif (ispc && autoomni)
+    [initPath,condaStatus] = condaactivateomnipose;
+    if condaStatus %conda is found & activated
+        opinstalled = 1;
+    else
+        warning('Conda not added to MATLAB Path.')
+        opinstalled = 0;
+    end
+end
+
+
+if ~exist([dirname_xy 'cp_masks'],'dir') && ~exist([dirname_xy 'masks'],'dir')  %if folder doesn't exist
+    opstr = genOmniposeCommand(dirname_xy); %get omnipose command
+    if opinstalled 
+        disp('Generating Omnipose masks.');
+        if (isunix || ismac)
+            [~,omnipose_out] = system(['source activate omnipose && ' opstr]); %call python to run cellpose
+        elseif ispc
+            [~,omnipose_out] = system(opstr);
+        end
+        disp(omnipose_out)
+    else %cellpose not installed or run manually
+        clipboard('copy',opstr);
+        disp(['<strong>Please run Omnipose on ..\xy\phase\ folder in Terminal to generate masks.</strong>']);
+        disp(['<strong>Omnipose command copied to clipboard:</strong>']);
+        disp(opstr);
+        [~] = input(['<strong>Press Enter when ready to continue.</strong>']);
+    end
+else %folder exists
+    if exist([dirname_xy 'cp_masks'],'dir')
+        cpmasksdir = dir([dirname_xy 'cp_masks']); %get contents of folder
+    elseif exist([dirname_xy 'masks'],'dir')
+        cpmasksdir = dir([dirname_xy 'masks']);
+    end
+    dirnotempty = max(~startsWith({cpmasksdir.name},'.')); %return 1 if file exists that's not a . hidden file
+    if dirnotempty==0 % no masks inside; folder is empty
+        opstr = genOmniposeCommand(dirname_xy); %get omnipose command
+        if opinstalled
+            disp('Generating Omnipose masks.');
+            if (isunix || ismac)
+                [~,omnipose_out] = system(['source activate omnipose && ' opstr]);
+            elseif ispc
+                [~,omnipose_out] = system(opstr);
+            end
+            disp(omnipose_out)
+        else
+            clipboard('copy',opstr);
+            disp(['<strong>Please run Omnipose on ..\xy\phase\ folder in Terminal to generate masks.</strong>']);
+            disp(['<strong>Omnipose command copied to clipboard:</strong>']);
+            disp(opstr);
+            [~] = input(['<strong>Press Enter when ready to continue.</strong>']);
+        end
+    elseif dirnotempty==1 %folder and masks exist
+    disp('Omnipose masks already generated.');
+    end
+end
+
+%after segmentation, reset the MATLAB path for Windows
+if (ispc && autoomni)
+    setenv('PATH', initPath);
+end
+
+
+
+disp('Continuing segmentation.'); 
 
 % does the segmentations for all the frames in parallel
+% Edit: not sure why this was at 2... 3 is segmentation 
+%if startEnd(1) <= 3 && startEnd(2) >=2 && ~exist( stamp_name, 'file' )
 if startEnd(1) <= 2 && startEnd(2) >=2 && ~exist( stamp_name, 'file' )
-    parfor(i=1:num_t,workers) % through all frames
-        %for i = 1:num_t
+   parfor(i=1:num_t,workers) % through all frames
+    %for i = 1:num_t
         
         if isempty( crop_box )
             crop_box_tmp = [];
@@ -356,3 +431,10 @@ if startEnd(2) >2
 end
 end
 
+function opstr = genOmniposeCommand(dirname_xy)
+    diralign = [dirname_xy 'phase' filesep];
+    % below command is legacy; should work with kevin's cellpose commit #d27dc6d or #7be0e59
+    % cpstr = ['python -m cellpose --dir ' diralign  ' --pretrained_model bact_omni --save_png --dir_above --no_npy --in_folders --nclasses 4 --omni --cluster --mask_threshold 1 --flow_threshold 0']; 
+    % below tested to work with omnipose installation, commit #5822683
+    opstr = ['python -m omnipose --dir ' diralign ' --omni --pretrained_model bact_phase_omni --save_png --dir_above --no_npy --in_folders --cluster --mask_threshold 1 --flow_threshold 0'];
+end
