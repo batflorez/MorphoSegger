@@ -1,10 +1,10 @@
-%%%%%%%%%%%%%%%%%%%%% -        MorphoSegger           - %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% - MorphoSegger - %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
 %     @@@@@@@@@@@@@@@@@@          @   @        @@@@@@@@@@@@@@@@@@@@       %
 %         @@@@@@@@@@@@@@@@@       @@@@@       @@@@@@@@@@@@@@@@@           %
 %             @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@              %
 %               @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                %
-%                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                 %
+%                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                  %
 %                          @@@@@@@@@@@@@@@@@@@                            %
 %                               @@@@@@@@@                                 %
 %                                  @@@@                                   %
@@ -20,7 +20,8 @@
 
 %%  MODIFY PIPELINE ACCORDING TO EXPERIMENT SETTINGS AND SAVE IT IN EXPERIMENT FOLDER
 
-function processExp(preprocess,naming,supersegger,cleanup,imag2stack,morpho)
+
+function processExp_pills(preprocess,naming,supersegger,cleanup,imag2stack,morpho)
 
 % Steps of the pipeline: 
 %Boolean variables to decide which steps of the pipeline to run:
@@ -51,9 +52,9 @@ if preprocess
     % Call MIJ for preprocessing:
     filepathMacro = getMacroPath(); %Macro Files path
 
-    % Select frames to analyze
+    % Select frames to analyze    *********
     t_start=1;
-    t_end=8;
+    t_end=14;
 
     %calls MIJ to run the Fiji macro with arguments
     args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
@@ -91,7 +92,7 @@ if naming
     timeFilterAfter = '.t' ;
     xyFilterBefore='';
     xyFilterAfter='xy';
-    channelNames = {'C=0','C=1'};
+    channelNames = {'C=1','C=0'};
 
     convertImageNames(dirname, basename, timeFilterBefore, ...
         timeFilterAfter, xyFilterBefore,xyFilterAfter, channelNames )
@@ -127,7 +128,7 @@ if supersegger
 
 %% Loading SuperSegger Constants
 
-    res = '60XEcM9'; %Constants from E.coli single cells
+    res = '100XBs_fil_perfect'; %These constants have been optimized for B.subtilis filaments
     CONST = loadConstants(res,parallel_flag) ;
 
 %% Modifying specific SuperSegger constant options
@@ -143,9 +144,9 @@ if supersegger
 
     % Constants Calarco Microscope:
     CONST.imAlign.Phase     = [ 0.0000    0.0000    0.0000    0.0000];
-    CONST.imAlign.GFP       = [ 0.0000    0.0000    1.0000    1.0000];
-    CONST.imAlign.mCherry   = [0.04351   -0.0000    0.7200    0.5700]; 
-    CONST.imAlign.DAPI      = [0.0000     0.0000    0.0000    0.0000]; 
+    CONST.imAlign.GFP       = [ 0.0000    0.0000    0.0000    0.0000];
+    CONST.imAlign.mCherry   = [ 0.0000    0.0000    0.0000    0.0000]; 
+    CONST.imAlign.DAPI      = [ 0.0000    0.0000   0.0000    0.0000]; 
 
 % *last two values are X and Y shifts.
  
@@ -160,25 +161,25 @@ if supersegger
                         CONST.imAlign.mCherry,...  % c3 channel name
                         CONST.imAlign.DAPI};        % c4 channel name
 
-%% Foci detection settings (For use only in SuperSegger)
+%% Foci detection settings (For use only in SuperSegger) *********
 
-    CONST.trackLoci.numSpots = [5 0]; % Max number of foci to fit in each fluorescence channel (default = [0 0])
-    CONST.trackLoci.fluorFlag = true ;    % compute integrated fluorescence (default = true)
-    CONST.trackOpti.NEIGHBOR_FLAG = true; % calculate number of neighbors (default = false)
+    CONST.trackLoci.numSpots = [0 0]; % Max number of foci to fit in each fluorescence channel (default = [0 0])
+    CONST.trackLoci.fluorFlag = true;    % compute integrated fluorescence (default = true)
+    CONST.trackOpti.NEIGHBOR_FLAG = false; % calculate number of neighbors (default = false)
     CONST.imAlign.AlignChannel = 1; % change this if you want the images to be aligned to fluorescence channel
     CONST.view.fluorColor = {'b','g','r'}; %Set the color for plotting different channels (in order)
 
-%% Segmentation Filtering options in SuperSegger (modify if you see problems in detection)
+%% Segmentation Filtering options in SuperSegger (modify if you see problems in detection) ********
 
     %The first two options (PEBBLE_CONST, INTENSITY_DIF) are for the remove_debris variable. 
-%     CONST.superSeggerOpti.PEBBLE_CONST = 1.3; %Default 1.5 for 60XEcM9
-%     CONST.superSeggerOpti.INTENSITY_DIF = 0.3; %Default 0.15 for 60XEcM9
+    CONST.superSeggerOpti.PEBBLE_CONST = 1.3; %Default 1.5 for 60XEcM9
+    CONST.superSeggerOpti.INTENSITY_DIF = 0.3; %Default 0.15 for 60XEcM9
     CONST.superSeggerOpti.remove_microcolonies =false; %Default is 1. It prevents deleting clusters of cells.
-    CONST.superSeggerOpti.remove_debris = false; %Turn off it is deleting cells
-%     CONST.superSeggerOpti.MAX_WIDTH = 1e15; %Set this high to prevent filaments to be split 
-%     CONST.seg.OPTI_FLAG = false; %To avoid segmenting cells by shape
-%     CONST.regionOpti.MIN_LENGTH = 10; %Min length of cell
-%     CONST.superSeggerOpti.MAGIC_RADIUS = 22;
+    CONST.superSeggerOpti.remove_debris = 0; %Turn off it is deleting cells
+    CONST.superSeggerOpti.MAX_WIDTH = 1e15; %Set this high to prevent filaments to be split 
+    CONST.seg.OPTI_FLAG = false; %To avoid segmenting cells by shape
+    CONST.regionOpti.MIN_LENGTH = 10; %Min length of cell
+    CONST.superSeggerOpti.MAGIC_RADIUS = 22;
 
 
     % this helps cleanup death cells, fragments etc..
@@ -192,7 +193,7 @@ if supersegger
 %% Time step and Pixel size settings:
 
     CONST.getLocusTracks.PixelSize =0.1; %Pixel size in Andor CCD 6.45 um divided by 60X
-    CONST.getLocusTracks.TimeStep = 3; %time between frames, used for analysis
+    CONST.getLocusTracks.TimeStep = 4; %time between frames, used for analysis
 
 %% Options to remove CellAsic pillars:
 
@@ -222,7 +223,7 @@ if supersegger
 
 % Analysis steps in SuperSegger
 
-% 1 : Alignment
+% 1 : Registration
 % 2 : Segmentation
 % 3 : Stripping
 % 4 : Linking
@@ -233,12 +234,11 @@ if supersegger
 % 9 : clist
 % 10 : cell files
 
-    % in MorphoSegger, only Registration, Segmentation and Stripping are used and
+    % in MorphoSegger, only Alignment, Segmentation and Stripping are used and
     % indicated in the variable startEnd.
 
     startEnd = [1 3];
-    autoomni = 0; %run Omnipose automatically with MATLAB
-    BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd,[], autoomni);
+    BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 
 
 end
@@ -314,6 +314,7 @@ if morpho
     %cleanMorphometrics(dirname)
     
 end
+
 %% Shutting down parallel pool
 
 disp('Closing parallel pool...')
@@ -324,6 +325,7 @@ delete(poolobj);
 
 t1=toc;
 disp(['Finished in ' num2str(round(10*t1/60)/10) ' minutes.']);
+
 load('handel') %alarm that the code is finished
 sound(y,Fs)
 
