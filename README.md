@@ -16,6 +16,7 @@ Before running MorphoSegger, make sure to get familiar with SuperSegger, Morphom
   * Global Optimization Toolbox  
   * Parallel Computing Toolbox  
   * Mapping Toolbox (for intensimetrics function in Morphometrics)
+  * Imaging Processing Toolbox
   #### Others:
   * Running installation of [Fiji](https://fiji.sc/) and [MIJ](http://bigwww.epfl.ch/sage/soft/mij/)  
   * Adapted code of SuperSegger and Morphometrics included in MorphoSegger package (see below for a list of modifcations).  
