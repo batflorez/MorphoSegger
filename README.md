@@ -52,7 +52,7 @@ The easiest way to install MIJ is via the repository. Click *Update > Manage upd
 ## Instructions
 
 **Note:** Check these YouTube tutorials to get quickly started.
-*  [How to use MorphoSegger](https://youtu.be/M7vxD7lyv-Y) (with examples)
+*  [How to use MorphoSegger](https://youtu.be/M7vxD7lyv-Y) (with examples, contact me for 'sample_time_lapses')
 
 
 1. Check all requirements above, then download the tool:
