@@ -20,6 +20,8 @@
 
 %%  MODIFY PIPELINE ACCORDING TO EXPERIMENT SETTINGS AND SAVE IT IN EXPERIMENT FOLDER
 
+TEST
+
 function processExp(preprocess,naming,supersegger,cleanup,imag2stack,morpho)
 
 % Steps of the pipeline: 
