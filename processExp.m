@@ -53,7 +53,7 @@ if preprocess
 
     % Select frames to analyze
     t_start=1;
-    t_end=8;
+    t_end=14;
 
     %calls MIJ to run the Fiji macro with arguments
     args=strcat(dirname,';',num2str(t_start),';',num2str(t_end)); %group arguments
@@ -222,7 +222,7 @@ if supersegger
 
 % Analysis steps in SuperSegger
 
-% 1 : Alignment
+% 1 : Registration
 % 2 : Segmentation
 % 3 : Stripping
 % 4 : Linking
@@ -237,8 +237,7 @@ if supersegger
     % indicated in the variable startEnd.
 
     startEnd = [1 3];
-    autoomni = 0; %run Omnipose automatically with MATLAB
-    BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd,[], autoomni);
+    BatchSuperSeggerOpti( dirname, skip, cleanflag, CONST,startEnd);
 
 
 end
