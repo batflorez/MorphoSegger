@@ -789,8 +789,10 @@ if or(chbx1,chbx2)
         if max(nums)>3000
             x_label='Width (um)';
             nums=nums/1000;
+            save("witdh.mat","nums")
         else
             x_label='Width (nm)';
+            save("witdh.mat","nums")
         end
         
         f1=figure;
@@ -799,8 +801,11 @@ if or(chbx1,chbx2)
         ylabel('Frequency')
         title(['Total number of objects:  ' num2str(length(nums))])
         box on
+        save("witdh.mat","nums")
     end
 end
+
+
 
 %mean width and length plots
 if or(chbx3,chbx4)
@@ -863,6 +868,7 @@ if or(chbx3,chbx4)
         end
     end
     
+    
     %plot mean length
     if chbx4
         if max(meanL)>3000
@@ -908,6 +914,7 @@ if or(chbx3,chbx4)
         ylabel(y_label)
         dtt=(max(dt_vec)-min(dt_vec))/100;
         xlim([min(dt_vec)-dtt,max(dt_vec)+dtt])
+        
         box on
     end
 end
